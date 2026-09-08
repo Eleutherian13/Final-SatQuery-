@@ -25,7 +25,7 @@ export interface ValidationCheck {
   id: string;
   label: string;
   status: ValidationCheckStatus;
-  detail?: string;
+  detail?: string | undefined;
 }
 
 export type RegistrationQuality = "good" | "acceptable" | "low" | "not_applicable";
@@ -33,9 +33,9 @@ export type RegistrationQuality = "good" | "acceptable" | "low" | "not_applicabl
 export interface ValidationResult {
   status: "validated" | "warning" | "invalid" | "pending";
   checks: ValidationCheck[];
-  registration?: {
+  registration?: undefined | {
     quality: RegistrationQuality;
-    note?: string;
+    note?: string | undefined;
   };
 }
 
@@ -86,7 +86,7 @@ export interface QueryIntent {
 export interface RouteNode {
   id: string;
   label: string;
-  detail?: string;
+  detail?: string | undefined;
 }
 
 /* ---------- Evidence ---------- */
@@ -118,12 +118,12 @@ export interface EvidenceObject {
   confidence: number | null;
   regionDescription: string | null;
   geometry: NormalisedBox | null;
-  polygon?: Array<[number, number]>;
+  polygon?: Array<[number, number]> | undefined;
   coordinates: string | null;
   quality: string | null;
   createdAt: string;
-  category?: ChangeCategory;
-  layer?: "before" | "after" | "change" | "optical" | "sar" | "fused";
+  category?: ChangeCategory | undefined;
+  layer?: "before" | "after" | "change" | "optical" | "sar" | "fused" | undefined;
 }
 
 export type ChangeCategory =
@@ -140,7 +140,7 @@ export type ConfidenceLevel = "high" | "medium" | "low" | "unsupported";
 export interface ConfidenceFactor {
   label: string;
   status: "supporting" | "uncertain" | "missing";
-  detail?: string;
+  detail?: string | undefined;
 }
 
 export interface Confidence {
@@ -203,12 +203,12 @@ export interface Refusal {
   required: string;
   received: string;
   action: string;
-  actionHint?: string;
+  actionHint?: string | undefined;
 }
 
 export interface AnalysisFailure {
   reason: string;
-  file?: string;
+  file?: string | undefined;
   recommendedAction: string;
 }
 
@@ -224,18 +224,18 @@ export interface AnalysisResult {
   answer: string;
   detailedAnswer: string;
   interpretation: string;
-  dominantFeatures?: string[];
+  dominantFeatures?: string[] | undefined;
   confidence: Confidence;
   evidence: EvidenceObject[];
   trace: TraceEvent[];
   tool: { name: string; version: string };
   model: { name: string; version: string };
   runtimeMs: number;
-  refusal?: Refusal;
-  failure?: AnalysisFailure;
-  modalityContributions?: ModalityContribution[];
-  fusionConfidence?: number;
-  temporal?: {
+  refusal?: Refusal | undefined;
+  failure?: AnalysisFailure | undefined;
+  modalityContributions?: ModalityContribution[] | undefined;
+  fusionConfidence?: number | undefined;
+  temporal?: undefined | {
     beforeDate: string;
     afterDate: string;
     orderValid: boolean;
