@@ -33,12 +33,13 @@ export const Route = createFileRoute("/")({
 });
 
 function Workspace() {
-  const [scenarioId, setScenarioId] = useState(demoScenarios[2].id);
+  const defaultScenario = demoScenarios[2] ?? demoScenarios[0]!;
+  const [scenarioId, setScenarioId] = useState(defaultScenario.id);
   const [activeEvidence, setActiveEvidence] = useState<string | null>(null);
 
   const scenario = useMemo(
-    () => demoScenarios.find((s) => s.id === scenarioId) ?? demoScenarios[0],
-    [scenarioId],
+    () => demoScenarios.find((s) => s.id === scenarioId) ?? defaultScenario,
+    [scenarioId, defaultScenario],
   );
   const result = scenario.result;
 
