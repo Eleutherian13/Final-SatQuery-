@@ -136,7 +136,7 @@ export function QueryComposer({
         />
         <div className="flex items-center justify-between border-t border-border px-2 py-1">
           <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
-            ⌘↵ run · {result.observed.length} observation(s) attached
+            ⌘↵ run · {result.intent.currentInput} attached
           </span>
           <button
             type="submit"
@@ -160,14 +160,14 @@ export function QueryComposer({
         ))}
       </div>
 
-      <dl className="grid grid-cols-2 gap-x-4 gap-y-1 border-t border-border pt-2 font-mono text-[10px]">
-        <Field label="detected intent" value={result.intent.label} strong />
-        <Field
-          label="intent confidence"
-          value={`${Math.round(result.intent.confidence * 100)}%`}
+      <dl className="grid gap-y-1.5 border-t border-border pt-2 font-mono text-[10px]">
+        <Stacked
+          label="detected intent"
+          value={`${result.intent.label} · ${Math.round(result.intent.confidence * 100)}%`}
+          strong
         />
-        <Field label="input requirement" value={result.intent.requiredInput} />
-        <Field label="received" value={result.intent.currentInput} />
+        <Stacked label="input requirement" value={result.intent.requiredInput} />
+        <Stacked label="received" value={result.intent.currentInput} />
       </dl>
       <div className="flex flex-wrap items-center gap-1.5">
         {result.intent.entities.map((e) => (
@@ -195,6 +195,15 @@ function Field({ label, value, strong }: { label: string; value: string; strong?
     <div className="flex items-baseline justify-between gap-2 truncate">
       <dt className="uppercase tracking-[0.14em] text-muted-foreground">{label}</dt>
       <dd className={`truncate ${strong ? "text-primary" : "text-foreground"}`}>{value}</dd>
+    </div>
+  );
+}
+
+function Stacked({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
+  return (
+    <div>
+      <dt className="uppercase tracking-[0.16em] text-muted-foreground">{label}</dt>
+      <dd className={strong ? "text-primary" : "text-foreground"}>{value}</dd>
     </div>
   );
 }
@@ -271,12 +280,12 @@ export function AnalysisResultPanel({ result }: { result: AnalysisResult }) {
         <p className="text-[13px] leading-relaxed text-foreground">{result.detailedAnswer}</p>
       </div>
       {result.temporal ? (
-        <dl className="grid grid-cols-2 gap-x-4 gap-y-1 border-y border-border py-2 font-mono text-[10px]">
-          <Field
+        <dl className="grid gap-y-1.5 border-y border-border py-2 font-mono text-[10px] sm:grid-cols-2">
+          <Stacked
             label="temporal window"
             value={`${result.temporal.beforeDate} → ${result.temporal.afterDate}`}
           />
-          <Field label="registration" value={result.temporal.registration} />
+          <Stacked label="registration" value={result.temporal.registration} />
         </dl>
       ) : null}
       <div>

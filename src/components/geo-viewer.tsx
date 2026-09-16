@@ -172,7 +172,7 @@ export function GeoViewer({ observations, evidence, activeEvidenceId, onSelectEv
         </div>
 
         {showGrid && (
-          <div className="pointer-events-none absolute inset-0 grid-backdrop opacity-40" />
+          <div className="pointer-events-none absolute inset-0 grid-backdrop opacity-[0.14]" />
         )}
 
         {/* evidence overlays */}
