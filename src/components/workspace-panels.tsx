@@ -136,7 +136,7 @@ export function QueryComposer({
         />
         <div className="flex items-center justify-between border-t border-border px-2 py-1">
           <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
-            ⌘↵ run · {result.observed.length} observation(s) attached
+            ⌘↵ run · {result.intent.currentInput} attached
           </span>
           <button
             type="submit"
@@ -280,12 +280,12 @@ export function AnalysisResultPanel({ result }: { result: AnalysisResult }) {
         <p className="text-[13px] leading-relaxed text-foreground">{result.detailedAnswer}</p>
       </div>
       {result.temporal ? (
-        <dl className="grid grid-cols-2 gap-x-4 gap-y-1 border-y border-border py-2 font-mono text-[10px]">
-          <Field
+        <dl className="grid gap-y-1.5 border-y border-border py-2 font-mono text-[10px] sm:grid-cols-2">
+          <Stacked
             label="temporal window"
             value={`${result.temporal.beforeDate} → ${result.temporal.afterDate}`}
           />
-          <Field label="registration" value={result.temporal.registration} />
+          <Stacked label="registration" value={result.temporal.registration} />
         </dl>
       ) : null}
       <div>
