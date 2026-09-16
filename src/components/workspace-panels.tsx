@@ -160,14 +160,14 @@ export function QueryComposer({
         ))}
       </div>
 
-      <dl className="grid grid-cols-2 gap-x-4 gap-y-1 border-t border-border pt-2 font-mono text-[10px]">
-        <Field label="detected intent" value={result.intent.label} strong />
-        <Field
-          label="intent confidence"
-          value={`${Math.round(result.intent.confidence * 100)}%`}
+      <dl className="grid gap-y-1.5 border-t border-border pt-2 font-mono text-[10px]">
+        <Stacked
+          label="detected intent"
+          value={`${result.intent.label} · ${Math.round(result.intent.confidence * 100)}%`}
+          strong
         />
-        <Field label="input requirement" value={result.intent.requiredInput} />
-        <Field label="received" value={result.intent.currentInput} />
+        <Stacked label="input requirement" value={result.intent.requiredInput} />
+        <Stacked label="received" value={result.intent.currentInput} />
       </dl>
       <div className="flex flex-wrap items-center gap-1.5">
         {result.intent.entities.map((e) => (
