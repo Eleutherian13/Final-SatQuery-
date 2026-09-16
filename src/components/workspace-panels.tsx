@@ -199,6 +199,15 @@ function Field({ label, value, strong }: { label: string; value: string; strong?
   );
 }
 
+function Stacked({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
+  return (
+    <div>
+      <dt className="uppercase tracking-[0.16em] text-muted-foreground">{label}</dt>
+      <dd className={strong ? "text-primary" : "text-foreground"}>{value}</dd>
+    </div>
+  );
+}
+
 /* ---------------- Routing stack ---------------- */
 
 export function RoutingStack({ result }: { result: AnalysisResult }) {
