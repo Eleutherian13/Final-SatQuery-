@@ -199,7 +199,7 @@ const goldenResult: AnalysisResult = {
   },
   evidence: goldenEvidence,
   trace: [
-    ev(1, 1, "input", "FILE RECEIVER", 180, {
+    ev(GOLDEN_REQ, 1, "input", "FILE RECEIVER", 180, {
       tool: "ingestion",
       message: "cartosat_demo.tif received",
       outputArtifacts: ["obs-golden"],
