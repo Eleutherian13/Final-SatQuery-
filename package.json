@@ -9,7 +9,10 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test:workflow": "npx tsx src/lib/workflow/test-state-machine.ts",
+    "test:spatial": "npx tsx src/lib/test-spatial-transform.ts",
+    "test": "npx tsx src/lib/workflow/test-state-machine.ts && npx tsx src/lib/test-spatial-transform.ts"
   },
   "overrides": {
     "rolldown": "1.2.1"

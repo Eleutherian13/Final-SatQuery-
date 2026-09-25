@@ -43,7 +43,8 @@ export function AppShell({ children }: { children: ReactNode }) {
                 activeOptions={{ exact: item.to === "/" }}
                 className="flex items-center border-r border-border px-4 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:bg-panel-raised hover:text-foreground"
                 activeProps={{
-                  className: "bg-panel-raised text-foreground shadow-[inset_0_-2px_0_0_var(--primary)]",
+                  className:
+                    "bg-panel-raised text-foreground shadow-[inset_0_-2px_0_0_var(--primary)]",
                 }}
               >
                 {item.label}
@@ -75,7 +76,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </div>
       </header>
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 min-w-0 max-w-full overflow-x-hidden">{children}</main>
     </div>
   );
 }
@@ -97,7 +98,9 @@ export function Panel({
   actions?: ReactNode;
 }) {
   return (
-    <section className={`flex min-h-0 flex-col bg-panel ${className}`}>
+    <section
+      className={`flex min-h-0 min-w-0 max-w-full flex-col overflow-hidden bg-panel ${className}`}
+    >
       <header className="flex h-8 shrink-0 items-center justify-between gap-2 border-b border-border px-3">
         <h2 className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
           {title}

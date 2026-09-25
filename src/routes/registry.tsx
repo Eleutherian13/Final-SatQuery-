@@ -143,7 +143,9 @@ function Registry() {
               >
                 <span className="text-muted-foreground">{label}</span>
                 <span className="flex items-center gap-1.5 text-foreground">
-                  <span className={`h-1.5 w-1.5 rounded-full ${ok ? "bg-success" : "bg-warning"}`} />
+                  <span
+                    className={`h-1.5 w-1.5 rounded-full ${ok ? "bg-success" : "bg-warning"}`}
+                  />
                   {value}
                 </span>
               </li>

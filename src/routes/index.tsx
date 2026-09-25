@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useState, useMemo } from "react";
 
 import { AppShell, Panel } from "@/components/app-shell";
 import { GeoViewer } from "@/components/geo-viewer";
 import { OrbitView } from "@/components/orbit-view";
+import { WorkflowIndicator } from "@/components/workflow-indicator";
+import { TrustExplainabilityView } from "@/components/trust-explainability";
 import {
   AnalysisResultPanel,
   ConfidenceBlock,
@@ -15,7 +17,10 @@ import {
   RoutingStack,
   Timeline,
 } from "@/components/workspace-panels";
-import { demoScenarios } from "@/lib/mock-data";
+import { goldenScenario, scenarios } from "@/lib/workflow-data";
+import { useWorkflow } from "@/lib/workflow/use-workflow";
+import { toCanonicalInvestigation } from "@/lib/investigation-engine";
+import type { EvidenceObject, Investigation } from "@/lib/types";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -39,21 +44,21 @@ export const Route = createFileRoute("/")({
   component: Workspace,
 });
 
-type BottomTab = "evidence" | "timeline" | "trace" | "acquisition";
+type BottomTab = "evidence" | "timeline" | "trace" | "acquisition" | "trust";
+type NarrowScreenView = "canvas" | "input" | "results";
 
 function Workspace() {
-  const defaultScenario = demoScenarios[2] ?? demoScenarios[0]!;
-  const [scenarioId, setScenarioId] = useState(defaultScenario.id);
+  const workflow = useWorkflow(goldenScenario, scenarios);
+  const scenario = workflow.scenario;
+  const result: Investigation = useMemo(() => toCanonicalInvestigation(scenario), [scenario]);
+
   const [activeEvidence, setActiveEvidence] = useState<string | null>(null);
+  const [hoveredEvidence, setHoveredEvidence] = useState<string | null>(null);
   const [activeObservation, setActiveObservation] = useState<string | null>(null);
   const [tab, setTab] = useState<BottomTab>("trace");
+  const [narrowView, setNarrowView] = useState<NarrowScreenView>("canvas");
 
-  const scenario = useMemo(
-    () => demoScenarios.find((s) => s.id === scenarioId) ?? defaultScenario,
-    [scenarioId, defaultScenario],
-  );
-  const result = scenario.result;
-  const selected = result.evidence.find((e) => e.id === activeEvidence) ?? null;
+  const selected = result.evidence.find((e: EvidenceObject) => e.id === activeEvidence) ?? null;
 
   return (
     <AppShell>
@@ -65,18 +70,19 @@ function Workspace() {
           dataset · cartosat / risat demo set
         </span>
         <div className="flex flex-wrap items-center gap-px">
-          {demoScenarios.map((s) => (
+          {scenarios.map((s) => (
             <button
               key={s.id}
               type="button"
               onClick={() => {
-                setScenarioId(s.id);
+                workflow.setScenarioId(s.id);
                 setActiveEvidence(null);
+                setHoveredEvidence(null);
               }}
               title={s.description}
               className={`border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] transition-colors ${
-                s.id === scenarioId
-                  ? "border-primary bg-primary/10 text-primary"
+                s.id === scenario.id
+                  ? "border-primary bg-primary/10 text-primary font-bold shadow-[inset_0_0_0_1px_var(--primary)]"
                   : "border-border text-muted-foreground hover:bg-panel-raised hover:text-foreground"
               }`}
             >
@@ -84,20 +90,53 @@ function Workspace() {
             </button>
           ))}
         </div>
+
+        {/* Narrow viewport panel switcher (< xl) */}
+        <div className="flex items-center gap-1 border-l border-border pl-3 xl:hidden">
+          <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
+            view:
+          </span>
+          {(["canvas", "input", "results"] as NarrowScreenView[]).map((v) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => setNarrowView(v)}
+              className={`border px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.12em] transition-colors ${
+                narrowView === v
+                  ? "border-primary bg-primary/10 text-primary font-bold"
+                  : "border-border text-muted-foreground hover:bg-panel-raised hover:text-foreground"
+              }`}
+            >
+              {v}
+            </button>
+          ))}
+        </div>
+
         <span className="ml-auto font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
           request <span className="text-foreground">{result.requestId}</span> ·{" "}
           {(result.runtimeMs / 1000).toFixed(1)} s
         </span>
       </div>
 
-      <div className="grid min-h-0 grid-cols-1 divide-border xl:grid-cols-[320px_minmax(0,1fr)_360px] xl:divide-x">
+      {/* Investigation Lifecycle Engine Bar */}
+      <WorkflowIndicator workflow={workflow} />
+
+      <div className="grid min-h-0 min-w-0 max-w-full grid-cols-1 divide-border xl:grid-cols-[320px_minmax(0,1fr)_360px] xl:divide-x">
         {/* left rail */}
-        <div className="flex min-w-0 flex-col divide-y divide-border border-b border-border xl:border-b-0">
+        <div
+          className={`min-w-0 max-w-full flex-col divide-y divide-border border-b border-border xl:flex xl:border-b-0 ${
+            narrowView === "input" ? "flex" : "hidden xl:flex"
+          }`}
+        >
           <Panel title="Query" meta={result.intent.compatibility} bodyClassName="">
             <QueryComposer
               query={scenario.query}
               result={result}
-              onRun={() => setActiveEvidence(null)}
+              workflow={workflow}
+              onRun={() => {
+                setActiveEvidence(null);
+                setHoveredEvidence(null);
+              }}
             />
           </Panel>
           <Panel
@@ -109,15 +148,24 @@ function Workspace() {
               observations={scenario.observations}
               activeId={activeObservation}
               onSelect={setActiveObservation}
+              workflow={workflow}
             />
           </Panel>
-          <Panel title="Routing" meta={`${Math.round(result.intent.confidence * 100)}% intent`} bodyClassName="">
-            <RoutingStack result={result} />
+          <Panel
+            title="Routing"
+            meta={`${Math.round(result.intent.confidence * 100)}% intent`}
+            bodyClassName=""
+          >
+            <RoutingStack result={result} workflow={workflow} />
           </Panel>
         </div>
 
         {/* primary canvas */}
-        <div className="flex min-w-0 flex-col">
+        <div
+          className={`min-w-0 max-w-full flex-col ${
+            narrowView === "canvas" ? "flex" : "hidden xl:flex"
+          }`}
+        >
           <Panel
             title="Geo view"
             meta={`${scenario.observations.map((o) => o.modality).join(" + ")} · ${result.workflow.label}`}
@@ -128,34 +176,57 @@ function Workspace() {
               observations={scenario.observations}
               evidence={result.evidence}
               activeEvidenceId={activeEvidence}
+              hoveredEvidenceId={hoveredEvidence}
               onSelectEvidence={setActiveEvidence}
+              onHoverEvidence={setHoveredEvidence}
+              workflowState={workflow.state}
             />
           </Panel>
         </div>
 
         {/* right rail */}
-        <div className="flex min-w-0 flex-col divide-y divide-border border-t border-border xl:border-t-0">
+        <div
+          className={`min-w-0 max-w-full flex-col divide-y divide-border border-t border-border xl:flex xl:border-t-0 ${
+            narrowView === "results" ? "flex" : "hidden xl:flex"
+          }`}
+        >
           <Panel title="Analysis result" bodyClassName="">
-            <AnalysisResultPanel result={result} />
+            <AnalysisResultPanel
+              result={result}
+              workflow={workflow}
+              onSwitchToTemporal={() => workflow.setScenarioId("demo-03")}
+              onSwitchToMultimodal={() => workflow.setScenarioId("demo-04")}
+            />
           </Panel>
           <Panel title="Confidence assessment" bodyClassName="">
-            <ConfidenceBlock result={result} />
+            <ConfidenceBlock result={result} workflow={workflow} />
           </Panel>
-          <Panel title="Evidence inspector" meta={selected ? selected.id : "none selected"} bodyClassName="">
-            <EvidenceInspector evidence={selected} observations={scenario.observations} />
+          <Panel
+            title="Evidence inspector"
+            meta={selected ? selected.id : "none selected"}
+            bodyClassName=""
+          >
+            <EvidenceInspector
+              evidence={selected}
+              observations={scenario.observations}
+              onFocusInViewer={(ev) => {
+                setActiveEvidence(ev.id);
+                setNarrowView("canvas");
+              }}
+            />
           </Panel>
         </div>
       </div>
 
       {/* bottom instrument bar */}
-      <div className="border-t border-border bg-panel">
-        <div className="flex items-stretch border-b border-border">
-          {(["trace", "evidence", "timeline", "acquisition"] as BottomTab[]).map((t) => (
+      <div className="border-t border-border bg-panel min-w-0 max-w-full overflow-hidden">
+        <div className="flex items-stretch border-b border-border overflow-x-auto">
+          {(["trace", "evidence", "timeline", "acquisition", "trust"] as BottomTab[]).map((t) => (
             <button
               key={t}
               type="button"
               onClick={() => setTab(t)}
-              className={`border-r border-border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors ${
+              className={`border-r border-border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] transition-colors shrink-0 ${
                 tab === t
                   ? "bg-panel-raised text-foreground shadow-[inset_0_-2px_0_0_var(--primary)]"
                   : "text-muted-foreground hover:text-foreground"
@@ -164,19 +235,31 @@ function Workspace() {
               {t}
             </button>
           ))}
-          <span className="ml-auto flex items-center px-3 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+          <span className="ml-auto hidden items-center px-3 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground sm:flex">
             {result.trace.length} stages · {result.evidence.length} evidence objects
           </span>
         </div>
         {tab === "trace" && <ExecutionTrace trace={result.trace} />}
         {tab === "evidence" && (
-          <div className="grid md:grid-cols-2 md:divide-x md:divide-border">
+          <div className="grid md:grid-cols-2 md:divide-x md:divide-border min-w-0 max-w-full">
             <EvidenceList
               evidence={result.evidence}
               activeId={activeEvidence}
-              onSelect={setActiveEvidence}
+              hoveredId={hoveredEvidence}
+              onSelect={(id) => {
+                setActiveEvidence(id);
+                setNarrowView("canvas");
+              }}
+              onHover={setHoveredEvidence}
             />
-            <EvidenceInspector evidence={selected} observations={scenario.observations} />
+            <EvidenceInspector
+              evidence={selected}
+              observations={scenario.observations}
+              onFocusInViewer={(ev) => {
+                setActiveEvidence(ev.id);
+                setNarrowView("canvas");
+              }}
+            />
           </div>
         )}
         {tab === "timeline" && <Timeline result={result} />}
@@ -199,6 +282,9 @@ function Workspace() {
               </ul>
             </div>
           </div>
+        )}
+        {tab === "trust" && (
+          <TrustExplainabilityView investigation={result} onSelectEvidence={setActiveEvidence} />
         )}
       </div>
     </AppShell>

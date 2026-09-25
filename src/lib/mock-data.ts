@@ -3,9 +3,134 @@
  * Every payload here is clearly labelled DEMO in the UI — never presented as
  * real inference output.
  */
-import opticalBefore from "@/assets/optical-before.jpg";
-import opticalAfter from "@/assets/optical-after.jpg";
-import sarImage from "@/assets/sar.jpg";
+
+export const fallbackOpticalBefore = `data:image/svg+xml;utf8,${encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#1a2e26"/>
+      <stop offset="50%" stop-color="#14241e"/>
+      <stop offset="100%" stop-color="#0f1b16"/>
+    </radialGradient>
+    <linearGradient id="river" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f3b5f"/>
+      <stop offset="50%" stop-color="#174f7c"/>
+      <stop offset="100%" stop-color="#0c2d49"/>
+    </linearGradient>
+    <pattern id="urbanGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <rect width="36" height="36" fill="#334155" opacity="0.4" rx="2"/>
+      <rect x="4" y="4" width="28" height="28" fill="#475569" opacity="0.3"/>
+      <line x1="0" y1="38" x2="40" y2="38" stroke="#1e293b" stroke-width="2"/>
+      <line x1="38" y1="0" x2="38" y2="40" stroke="#1e293b" stroke-width="2"/>
+    </pattern>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <polygon points="40,80 320,60 360,280 80,300" fill="#2d4a3e" opacity="0.6"/>
+  <polygon points="340,50 680,40 650,220 370,250" fill="#233d32" opacity="0.7"/>
+  <polygon points="700,60 980,80 940,320 670,240" fill="#355849" opacity="0.5"/>
+  <polygon points="60,650 400,600 450,920 80,960" fill="#254336" opacity="0.65"/>
+  <polygon points="580,620 960,600 980,950 620,960" fill="#1e362c" opacity="0.75"/>
+  <path d="M-20,420 C180,400 260,350 420,380 C580,410 650,560 760,540 C870,520 920,440 1040,460 L1040,580 C900,560 840,640 730,660 C610,680 520,530 380,500 C240,470 160,510 -20,540 Z" fill="url(#river)"/>
+  <rect x="260" y="140" width="220" height="180" fill="url(#urbanGrid)"/>
+  <rect x="540" y="120" width="260" height="200" fill="url(#urbanGrid)"/>
+  <rect x="220" y="660" width="340" height="260" fill="url(#urbanGrid)"/>
+  <path d="M-20,240 L1040,220" stroke="#64748b" stroke-width="4" opacity="0.6"/>
+  <path d="M-20,780 L1040,760" stroke="#64748b" stroke-width="4" opacity="0.6"/>
+  <path d="M480,-20 L500,1040" stroke="#64748b" stroke-width="4" opacity="0.6"/>
+  <line x1="0" y1="512" x2="1024" y2="512" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,8" opacity="0.2"/>
+  <line x1="512" y1="0" x2="512" y2="1024" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,8" opacity="0.2"/>
+  <rect x="20" y="20" width="410" height="28" fill="#000" opacity="0.6" rx="3"/>
+  <text x="30" y="39" fill="#38bdf8" font-family="monospace" font-size="11" font-weight="bold" letter-spacing="2">CARTOSAT-3 MX · 0.6m GSD · OPTICAL T1</text>
+</svg>`)}`;
+
+export const fallbackOpticalAfter = `data:image/svg+xml;utf8,${encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <radialGradient id="bg2" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#1a2e26"/>
+      <stop offset="50%" stop-color="#14241e"/>
+      <stop offset="100%" stop-color="#0f1b16"/>
+    </radialGradient>
+    <linearGradient id="river2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f3b5f"/>
+      <stop offset="50%" stop-color="#174f7c"/>
+      <stop offset="100%" stop-color="#0c2d49"/>
+    </linearGradient>
+    <pattern id="urbanGrid2" width="40" height="40" patternUnits="userSpaceOnUse">
+      <rect width="36" height="36" fill="#334155" opacity="0.4" rx="2"/>
+      <rect x="4" y="4" width="28" height="28" fill="#475569" opacity="0.3"/>
+      <line x1="0" y1="38" x2="40" y2="38" stroke="#1e293b" stroke-width="2"/>
+      <line x1="38" y1="0" x2="38" y2="40" stroke="#1e293b" stroke-width="2"/>
+    </pattern>
+    <pattern id="newDev" width="30" height="30" patternUnits="userSpaceOnUse">
+      <rect width="28" height="28" fill="#cbd5e1" opacity="0.5" rx="1"/>
+      <line x1="0" y1="29" x2="30" y2="29" stroke="#94a3b8" stroke-width="1.5"/>
+    </pattern>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg2)"/>
+  <polygon points="40,80 320,60 360,280 80,300" fill="#2d4a3e" opacity="0.6"/>
+  <polygon points="340,50 680,40 650,220 370,250" fill="#233d32" opacity="0.7"/>
+  <polygon points="700,60 980,80 940,320 670,240" fill="#355849" opacity="0.5"/>
+  <polygon points="60,650 400,600 450,920 80,960" fill="#254336" opacity="0.65"/>
+  <path d="M-20,420 C180,400 260,350 420,380 C580,410 650,560 760,540 C870,520 920,440 1040,460 L1040,580 C900,560 840,640 730,660 C610,680 520,530 380,500 C240,470 160,510 -20,540 Z" fill="url(#river2)"/>
+  <rect x="260" y="140" width="220" height="180" fill="url(#urbanGrid2)"/>
+  <rect x="540" y="120" width="260" height="200" fill="url(#urbanGrid2)"/>
+  <rect x="220" y="660" width="340" height="260" fill="url(#urbanGrid2)"/>
+  
+  <!-- New expansion in south-east -->
+  <rect x="580" y="640" width="360" height="280" fill="url(#newDev)"/>
+  
+  <path d="M-20,240 L1040,220" stroke="#64748b" stroke-width="4" opacity="0.6"/>
+  <path d="M-20,780 L1040,760" stroke="#64748b" stroke-width="4" opacity="0.6"/>
+  <path d="M480,-20 L500,1040" stroke="#64748b" stroke-width="4" opacity="0.6"/>
+  <rect x="20" y="20" width="410" height="28" fill="#000" opacity="0.6" rx="3"/>
+  <text x="30" y="39" fill="#38bdf8" font-family="monospace" font-size="11" font-weight="bold" letter-spacing="2">CARTOSAT-3 MX · OPTICAL T2 (AFTER)</text>
+</svg>`)}`;
+
+export const fallbackSar = `data:image/svg+xml;utf8,${encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <radialGradient id="sarBg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#1e242b"/>
+      <stop offset="50%" stop-color="#14181d"/>
+      <stop offset="100%" stop-color="#0a0d10"/>
+    </radialGradient>
+    <pattern id="speckle" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="3" cy="7" r="1" fill="#fff" opacity="0.25"/>
+      <circle cx="12" cy="4" r="0.8" fill="#fff" opacity="0.3"/>
+      <circle cx="17" cy="15" r="1.2" fill="#fff" opacity="0.2"/>
+      <circle cx="8" cy="18" r="0.6" fill="#fff" opacity="0.35"/>
+    </pattern>
+    <pattern id="doubleBounce" width="24" height="24" patternUnits="userSpaceOnUse">
+      <rect width="20" height="20" fill="#e2e8f0" opacity="0.85"/>
+      <rect x="2" y="2" width="16" height="16" fill="#ffffff" opacity="0.95"/>
+    </pattern>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#sarBg)"/>
+  <rect width="1024" height="1024" fill="url(#speckle)"/>
+  
+  <!-- Smooth specular water body (Low backscatter - dark) -->
+  <path d="M-20,420 C180,400 260,350 420,380 C580,410 650,560 760,540 C870,520 920,440 1040,460 L1040,580 C900,560 840,640 730,660 C610,680 520,530 380,500 C240,470 160,510 -20,540 Z" fill="#040608"/>
+
+  <!-- High double-bounce structural clusters (Buildings) -->
+  <rect x="260" y="140" width="220" height="180" fill="url(#doubleBounce)"/>
+  <rect x="540" y="120" width="260" height="200" fill="url(#doubleBounce)"/>
+  <rect x="220" y="660" width="340" height="260" fill="url(#doubleBounce)"/>
+
+  <!-- Telemetry Stamp -->
+  <rect x="20" y="20" width="410" height="28" fill="#000" opacity="0.6" rx="3"/>
+  <text x="30" y="39" fill="#a855f7" font-family="monospace" font-size="11" font-weight="bold" letter-spacing="2">EOS-04 C-BAND SAR · VV+VH DUAL-POL</text>
+</svg>`)}`;
+
+const opticalBefore = fallbackOpticalBefore;
+const opticalAfter = fallbackOpticalAfter;
+const sarImage = fallbackSar;
+
+export const previewAssets = {
+  opticalBefore,
+  opticalAfter,
+  sar: sarImage,
+};
 
 import type {
   AnalysisHistoryEntry,
@@ -17,12 +142,6 @@ import type {
   ToolInfo,
   TraceEvent,
 } from "./types";
-
-export const previewAssets = {
-  opticalBefore,
-  opticalAfter,
-  sar: sarImage,
-};
 
 const validatedChecks = (pair: boolean) => [
   { id: "readable", label: "File readable", status: "pass" as const },
@@ -163,12 +282,15 @@ function traceEvent(
 
 function evidence(
   index: number,
-  partial: Omit<EvidenceObject, "index" | "id" | "createdAt">,
+  partial: Omit<EvidenceObject, "index" | "id" | "createdAt" | "coordinateFrame"> & {
+    coordinateFrame?: EvidenceObject["coordinateFrame"];
+  },
 ): EvidenceObject {
   return {
     id: `ev-${String(index).padStart(2, "0")}`,
     index,
     createdAt: "2026-09-07T12:41:06Z",
+    coordinateFrame: "NORMALIZED_IMAGE",
     ...partial,
   };
 }
@@ -224,9 +346,7 @@ const demo01: AnalysisResult = {
       { label: "Input quality", status: "supporting" },
       { label: "Model agreement", status: "uncertain", detail: "Two of three heads agree" },
     ],
-    limitations: [
-      "Land-cover shares are qualitative; no per-class area statistics were computed.",
-    ],
+    limitations: ["Land-cover shares are qualitative; no per-class area statistics were computed."],
   },
   evidence: [
     evidence(1, {
@@ -371,38 +491,47 @@ const demo03: AnalysisResult = {
     compatibility: "compatible",
   },
   route: [
-    { id: "input", label: "INPUT", detail: "2 images" },
-    { id: "validator", label: "VALIDATOR", detail: "Temporal pair" },
-    { id: "router", label: "ROUTER", detail: "Change VQA" },
-    { id: "detector", label: "CHANGE DETECTOR" },
-    { id: "classifier", label: "CHANGE CLASSIFIER" },
-    { id: "verifier", label: "EVIDENCE VERIFIER" },
+    { id: "input", label: "INPUT", detail: "2 temporal images" },
+    { id: "validator", label: "TEMPORAL VALIDATOR", detail: "order + registration" },
+    { id: "planner", label: "EVIDENCE PLANNER", detail: "change constraints" },
+    { id: "detector", label: "CHANGE DETECTOR", detail: "measurement (1.42 km²)" },
+    { id: "proposer", label: "PROPOSER", detail: "interpretation hypothesis" },
+    { id: "skeptic", label: "SKEPTIC", detail: "adversarial critique" },
+    { id: "verifier", label: "EVIDENCE VERIFIER", detail: "adversarial resolution" },
     { id: "composer", label: "ANSWER COMPOSER" },
   ],
   observed: [
-    "Change mask detected over 3 contiguous regions",
+    "Change mask detected over 3 contiguous regions (1.42 km² total difference)",
     "New rooftop texture present in AFTER, absent in BEFORE (eastern sector)",
-    "Loss of vegetated parcel signature in south-eastern sector",
+    "Loss of vegetated parcel signature in south-eastern sector (agricultural harvest context)",
   ],
   answer:
-    "Built-up area appears to have increased, concentrated primarily in the eastern and southeastern portions of the scene.",
+    "Built-up area appears to have increased, concentrated primarily in the eastern sector; southeastern sector vegetation loss qualified by seasonal phenology.",
   detailedAnswer:
-    "Comparison of the registered temporal pair indicates net built-up expansion between 12 Apr 2025 and 28 Oct 2025. Three change regions were detected and classified: two as built-up expansion (eastern and southeastern sectors) and one as vegetation loss adjacent to the southeastern expansion front. No built-up removal was detected.",
+    "Comparison of the registered temporal pair indicates confirmed built-up expansion in the eastern sector (Region 01) and new access corridor infrastructure (Region 03) between 12 Apr 2025 and 28 Oct 2025. Following adversarial review by the Skeptic auditor, Region 02 is qualified as vegetation loss rather than confirmed built-up expansion due to spectral consistency with seasonal crop harvest. A 0.8 px co-registration residual is an active limitation.",
   interpretation:
     "The pattern is consistent with settlement expansion onto previously cultivated parcels.",
   confidence: {
     level: "high",
     score: 0.88,
     factors: [
-      { label: "Evidence completeness", status: "supporting" },
-      { label: "Registration quality", status: "supporting", detail: "Residual 0.8 px" },
-      { label: "Model agreement", status: "supporting" },
-      { label: "Input quality", status: "supporting" },
-      { label: "Small-object sensitivity", status: "uncertain" },
+      { label: "Change evidence measurement", status: "supporting", detail: "3 candidate regions" },
+      { label: "Registration quality", status: "supporting", detail: "Residual 0.8 px (warning)" },
+      {
+        label: "Proposer / Skeptic agreement",
+        status: "uncertain",
+        detail: "R02 contested by Skeptic",
+      },
+      { label: "Evidence completeness", status: "supporting", detail: "3/3 regions audited" },
+      {
+        label: "Seasonal phenology robustness",
+        status: "uncertain",
+        detail: "Dry vs post-monsoon",
+      },
     ],
     limitations: [
-      "Small objects below the validated resolution threshold may be missed.",
-      "Seasonal difference between acquisitions may affect vegetation classes.",
+      "Registration residual uncertainty (0.8 px) qualifies boundary precision in narrow linear features (Region 03).",
+      "Seasonal agricultural phenology between April and October may account for vegetation reflectance drop in Region 02; built-up status deferred.",
     ],
   },
   evidence: [
@@ -433,9 +562,9 @@ const demo03: AnalysisResult = {
       layer: "change",
     }),
     evidence(3, {
-      type: "change_mask",
-      label: "Region 03 — infrastructure",
-      sourceTool: "change_classifier",
+      type: "change_region",
+      label: "Region 03 — infrastructure corridor",
+      sourceTool: "change_detector",
       sourceVersion: "v0.4.2",
       confidence: 0.81,
       regionDescription: "Southern access corridor",
@@ -444,7 +573,7 @@ const demo03: AnalysisResult = {
       quality: "Good",
       category: "infrastructure",
       layer: "change",
-    } as never),
+    }),
   ],
   trace: [
     traceEvent("req_c71e0042", "validation", "INPUT VALIDATOR", 1200, {
@@ -455,31 +584,45 @@ const demo03: AnalysisResult = {
     }),
     traceEvent("req_c71e0042", "validation", "TEMPORAL COMPATIBILITY", 300, {
       tool: "compatibility",
-      message: "Acquisition order valid (2025-04-12 → 2025-10-28)",
+      message: "Acquisition order valid (2025-04-12 → 2025-10-28 · Δ 199 days)",
     }),
     traceEvent("req_c71e0042", "preprocessing", "REGISTRATION", 700, {
       tool: "spatial_registration",
       parameters: { method: "phase_correlation" },
-      message: "Residual 0.8 px — acceptable",
+      message: "Residual 0.8 px — warning flag raised for narrow linear boundaries",
     }),
     traceEvent("req_c71e0042", "classification", "QUERY CLASSIFIER", 400, {
       tool: "query_router",
       modelVersion: "intent-clf v0.3.1",
     }),
-    traceEvent("req_c71e0042", "routing", "WORKFLOW ROUTER", 200, { tool: "query_router" }),
-    traceEvent("req_c71e0042", "execution", "CHANGE DETECTOR", 2800, {
-      tool: "change_detector",
-      modelVersion: "bitemporal-cd v0.4.2",
-      parameters: { threshold: 0.55, min_region_px: 256 },
-      outputArtifacts: ["ev-01", "ev-02", "ev-03"],
+    traceEvent("req_c71e0042", "routing", "DECISION ENGINE", 200, {
+      tool: "jev",
+      message: "Routed to Change Detector, Proposer Agent, Skeptic Auditor, and Verifier",
     }),
-    traceEvent("req_c71e0042", "execution", "CHANGE CLASSIFIER", 1400, {
-      tool: "change_vqa",
-      modelVersion: "change-clf v0.4.2",
+    traceEvent("req_c71e0042", "measurement", "CHANGE DETECTOR", 2800, {
+      tool: "bitemporal_cd",
+      modelVersion: "v0.4.2",
+      parameters: { threshold: 0.55, min_region_px: 256, method: "spectral_difference" },
+      outputArtifacts: ["mask:change", "regions:r1_r2_r3"],
+      message: "Measurement: 1.42 km² total difference detected across 3 candidate regions",
+    }),
+    traceEvent("req_c71e0042", "interpretation", "PROPOSER", 1200, {
+      tool: "change_vqa_proposer",
+      modelVersion: "rs-vqa v0.4.2",
+      outputArtifacts: ["hypotheses:h1"],
+      message: "Proposer: Built-up expansion hypothesized in eastern & southeastern sectors",
+    }),
+    traceEvent("req_c71e0042", "adversarial_critique", "SKEPTIC", 1100, {
+      tool: "spatial_skeptic",
+      modelVersion: "adversarial-auditor v0.4.2",
+      outputArtifacts: ["critique:c1"],
+      message: "Skeptic: 0.8px residual checked; Region 02 contested due to seasonal crop variance",
     }),
     traceEvent("req_c71e0042", "verification", "EVIDENCE VERIFIER", 600, {
       tool: "evidence_verifier",
-      message: "3/3 regions supported by both observations",
+      outputArtifacts: ["ev-01", "ev-02", "ev-03"],
+      message:
+        "Adversarial resolution: R01 confirmed, R02 qualified as vegetation loss, R03 road corridor confirmed",
     }),
     traceEvent("req_c71e0042", "composition", "ANSWER COMPOSER", 500, {
       tool: "answer_composer",
@@ -494,6 +637,151 @@ const demo03: AnalysisResult = {
     orderValid: true,
     registration: "acceptable",
   },
+  biTemporal: {
+    validation: {
+      imageCount: 2,
+      beforeDate: "2025-04-12",
+      afterDate: "2025-10-28",
+      orderValid: true,
+      deltaDays: 199,
+      spatialCorrespondence: {
+        overlapPercent: 99.4,
+        footprintMatch: true,
+        intersectionAreaKm2: 24.1,
+      },
+      crsCompatibility: {
+        beforeCrs: "EPSG:4326 (WGS 84)",
+        afterCrs: "EPSG:4326 (WGS 84)",
+        compatible: true,
+      },
+      registration: {
+        status: "registered",
+        quality: "acceptable",
+        residualPx: 0.8,
+        tolerancePx: 1.5,
+        warning: "Sub-pixel residual 0.8 px detected; edge boundary uncertainty present.",
+      },
+    },
+    measurement: {
+      tool: "bitemporal_cd",
+      version: "v0.4.2",
+      method: "Deep Spectral-Spatial Difference + Feature Correlation",
+      totalChangeAreaKm2: 1.42,
+      pixelDifferenceThreshold: 0.55,
+      candidateRegions: [
+        {
+          id: "r1",
+          label: "Region 01 — Eastern Sector",
+          areaKm2: 0.58,
+          rawDifferenceScore: 0.89,
+          spectralShift: "Red/NIR reflectance surge + high texture contrast",
+          geometry: { x: 0.62, y: 0.3, w: 0.28, h: 0.24 },
+        },
+        {
+          id: "r2",
+          label: "Region 02 — South-Eastern Sector",
+          areaKm2: 0.44,
+          rawDifferenceScore: 0.73,
+          spectralShift: "NDVI decrease -0.38, moderate texture change",
+          geometry: { x: 0.56, y: 0.62, w: 0.22, h: 0.2 },
+        },
+        {
+          id: "r3",
+          label: "Region 03 — Southern Access Corridor",
+          areaKm2: 0.4,
+          rawDifferenceScore: 0.81,
+          spectralShift: "Linear high-reflectance feature, low backscatter",
+          geometry: { x: 0.3, y: 0.74, w: 0.3, h: 0.12 },
+        },
+      ],
+    },
+    proposer: {
+      model: "Change-VQA Proposer Agent v0.4.2",
+      hypothesis:
+        "Built-up area appears to have increased significantly between 12 Apr 2025 and 28 Oct 2025, concentrated in the eastern sector, accompanied by vegetation conversion in the southeast and new infrastructure development along the southern corridor.",
+      proposedChanges: [
+        {
+          regionId: "r1",
+          label: "Region 01",
+          classLabel: "Built-up expansion",
+          confidence: 0.92,
+          rationale: "Rectilinear rooftop clusters and compacted foundation pads in T2.",
+        },
+        {
+          regionId: "r2",
+          label: "Region 02",
+          classLabel: "Vegetation clearance / Built-up front",
+          confidence: 0.84,
+          rationale: "Vegetated parcel cleared for settlement expansion.",
+        },
+        {
+          regionId: "r3",
+          label: "Region 03",
+          classLabel: "Infrastructure / Access road",
+          confidence: 0.86,
+          rationale: "Linear graded corridor connecting western parcel to main road.",
+        },
+      ],
+      summary: "Net positive built-up growth across all 3 detected change clusters.",
+    },
+    skeptic: {
+      model: "Adversarial Spatial Auditor v0.4.2",
+      registrationVulnerability: {
+        couldBeArtifact: true,
+        residualPx: 0.8,
+        analysis:
+          "Sub-pixel residual is 0.8 px. For Region 01 (broad parcel), 0.8 px cannot create false positive rooftop clusters. For Region 03 (narrow corridor), edge aliasing inflates corridor width by up to 1.6 px. Boundary width is qualified.",
+      },
+      spatialCoherence: {
+        coherent: true,
+        analysis:
+          "Region 01 is highly coherent (clustered buildings, 0.94 coherence index). Region 02 shows diffuse spectral shift consistent with dry-season senescence / harvest rather than permanent built-up impervious surface.",
+      },
+      evidenceSufficiency: {
+        sufficient: true,
+        analysis:
+          "Region 01: High confidence. Sufficient. Region 02: Insufficient spectral proof of built-up paving; vegetation loss confirmed, but built-up status unverified. Region 03: Sufficient for roadway grading, insufficient for surface type.",
+      },
+      contradictions: [
+        "Contradiction on Region 02: Proposer classified as built-up expansion; spectral signature matches seasonal fallow agricultural cycle (April pre-monsoon vs October post-monsoon harvest).",
+      ],
+      alternativeExplanations: [
+        "Region 02: Agricultural crop cycle or seasonal soil exposure, not permanent urban fabric.",
+      ],
+      verdict: "supported_with_reservations",
+    },
+    adversarial: {
+      proposerHypothesis:
+        "Built-up area appears to have increased significantly between 12 Apr 2025 and 28 Oct 2025, concentrated in the eastern sector, accompanied by vegetation conversion in the southeast and new infrastructure development along the southern corridor.",
+      skepticCritique:
+        "Sub-pixel residual is 0.8 px. For Region 01 (broad parcel), 0.8 px cannot create false positive rooftop clusters. For Region 03 (narrow corridor), edge aliasing inflates corridor width by up to 1.6 px. Boundary width is qualified.",
+      disagreements: [
+        {
+          topic: "Region 02 Classification (Vegetation vs Built-up)",
+          proposerClaim: "Built-up expansion front replacing vegetation",
+          skepticContestation:
+            "Spectral drop in NDVI (-0.38) matches seasonal crop harvest/senescence; no rooftop or impervious structure detected",
+          resolution:
+            "Classified conservatively as 'Vegetation loss / open parcel' with built-up confirmation deferred. Net built-up calculation excludes Region 02.",
+          impactOnConfidence: "slight_reduction",
+        },
+        {
+          topic: "Region 03 Corridor Width Precision",
+          proposerClaim: "18-meter wide paved arterial corridor",
+          skepticContestation:
+            "0.8 px registration residual inflates 0.6 m GSD corridor edges by ~1.2 m. True width ~15 m.",
+          resolution:
+            "Corridor presence confirmed; boundary metrics adjusted for registration tolerance.",
+          impactOnConfidence: "none",
+        },
+      ],
+      verifiedInterpretation:
+        "Built-up area has confirmed increase concentrated in the eastern sector (Region 01). Southern corridor infrastructure confirmed (Region 03). Southeastern sector (Region 02) exhibits vegetation loss, but built-up classification is contested and qualified due to seasonal agricultural variance.",
+      verifiedStatus: "qualified",
+      registrationWarning:
+        "Residual registration uncertainty (0.8 px) qualifies narrow linear boundaries in Region 03.",
+    },
+  },
   source: "demo",
 };
 
@@ -503,7 +791,7 @@ const demo04: AnalysisResult = {
   requestId: "req_2a55b9de",
   name: "FUSION-0007",
   createdAt: "2026-09-07T12:48:12Z",
-  query: "Use the optical and SAR images together to identify built-up and water-covered regions.",
+  query: "Identify built-up and water-covered regions using both observations.",
   workflow: {
     id: "optical_sar",
     label: "Optical-SAR Multimodal Analysis",
@@ -645,6 +933,93 @@ const demo04: AnalysisResult = {
     { modality: "sar", contribution: "high", note: "Structural / scattering response" },
   ],
   fusionConfidence: 0.92,
+  crossModal: {
+    validation: {
+      opticalObservationId: "obs-opt",
+      sarObservationId: "obs-sar",
+      crsAlignment: "exact",
+      crsTarget: "EPSG:4326 (WGS 84)",
+      opticalGsdM: 0.6,
+      sarGsdM: 6.0,
+      resolutionRatio: 10.0,
+      spatialOverlapPercent: 96.4,
+      temporalDeltaDays: 2.1,
+      polarization: "VV+VH",
+      incidenceAngleDeg: 34.2,
+      status: "pass",
+      detail: "Spatial overlap > 95%, temporal baseline 2.1 days, dual-pol VV+VH available",
+    },
+    physicsSideFeatures: {
+      sar: {
+        doubleBounceIntensityDb: 14.2,
+        surfaceRoughness: "low",
+        shadowLayoverIdentified: true,
+        polarizationRatioVvVh: 6.8,
+        dielectricMoistureEstimate: "dry",
+        speckleFilterApplied: "Refined Lee (5×5 window)",
+        incidenceAngleDeg: 34.2,
+      },
+      optical: {
+        ndbiBuiltUpIndex: 0.34,
+        ndviVegetationSuppression: -0.12,
+        ndwiWaterSuppression: 0.48,
+        edgeDensity: 0.28,
+        spectralBrightnessAvg: 612.4,
+        cloudShadowOcclusionPercent: 1.8,
+      },
+      physicsInsight:
+        "High SAR double-bounce backscatter (+14.2 dB) on dihedral building wall-ground interfaces decisively verifies built-up candidates detected via high optical edge density, while low specular SAR backscatter (-22.4 dB) corroborates low optical reflectance to definitively map the water reservoir.",
+    },
+    alignmentAdapter: {
+      method: "homography",
+      sourceCrs: "EPSG:32643 (UTM 43N)",
+      targetCrs: "EPSG:4326 (WGS 84)",
+      subPixelResidualPx: 0.28,
+      resamplingFilter: "bilinear",
+      coverageOverlapAreaKm2: 48.2,
+    },
+    opticalBranch: {
+      modality: "optical",
+      modelName: "RS VLM Optical Land-Cover Encoder",
+      modelVersion: "v0.1.0",
+      runtimeMs: 1500,
+      featuresExtracted: [
+        "Multispectral NDBI / NDVI / NDWI feature maps",
+        "Canny edge density & structural linear patterns",
+        "Rooftop spectral signature extraction",
+      ],
+      candidateRegionsCount: 6,
+      primaryConfidence: 0.88,
+      modalitySummary: "High-resolution spectral boundaries mapped with 0.6m spatial fidelity.",
+    },
+    sarBranch: {
+      modality: "sar",
+      modelName: "SAR Backscatter & Polarimetric Specialist",
+      modelVersion: "v0.2.0",
+      runtimeMs: 1600,
+      featuresExtracted: [
+        "VV/VH polarimetric decomposition",
+        "Dihedral corner double-bounce candidate detection",
+        "Specular water surface low-scattering segmentation",
+      ],
+      candidateRegionsCount: 5,
+      primaryConfidence: 0.86,
+      modalitySummary:
+        "Dielectric and structural microwave scattering confirms building mass and excludes vegetation false alarms.",
+    },
+    fusion: {
+      fusionMethod: "decision_level",
+      opticalWeight: 0.55,
+      sarWeight: 0.45,
+      consensusRegionsCount: 5,
+      opticalOnlyRegionsCount: 1,
+      sarOnlyRegionsCount: 0,
+      consensusConfidence: 0.92,
+      agreementRatePercent: 91.4,
+      fusionSummary:
+        "Cross-modal fusion achieved 91.4% spatial agreement across built-up and water-covered regions. Dual confirmation eliminates shadow ambiguities and elevates overall certainty to 92%.",
+    },
+  },
   source: "demo",
 };
 
@@ -710,11 +1085,12 @@ const demo05: AnalysisResult = {
   model: { name: "—", version: "—" },
   runtimeMs: 1350,
   refusal: {
-    title: "CANNOT EXECUTE",
-    required: "2 temporally corresponding observations",
-    received: "1 image",
-    action: "UPLOAD SECOND OBSERVATION",
-    actionHint: "Add an observation acquired at a different date to enable change analysis.",
+    title: "ANALYSIS BLOCKED",
+    required: "A bi-temporal comparison requires two spatially corresponding observations.",
+    received: "1 observation (single epoch)",
+    action: "NO SPECIALIST MODEL EXECUTED",
+    actionHint:
+      "A bi-temporal comparison requires two spatially corresponding observations. Upload a second acquisition date.",
   },
   source: "demo",
 };
@@ -741,9 +1117,7 @@ const demo06: AnalysisResult = {
       { label: "Model agreement", status: "missing", detail: "Low" },
       { label: "Input quality", status: "uncertain", detail: "Moderate" },
     ],
-    limitations: [
-      "Structure class separation is not validated at this ground sampling distance.",
-    ],
+    limitations: ["Structure class separation is not validated at this ground sampling distance."],
   },
   evidence: [
     evidence(1, {
@@ -760,6 +1134,222 @@ const demo06: AnalysisResult = {
     }),
   ],
   runtimeMs: 4100,
+};
+
+/* ---------- DEMO 07 — Modality Incompatible Refusal (Optical + Optical for Fusion Query) ---------- */
+
+const demo07: AnalysisResult = {
+  requestId: "req_incomp_opt_opt",
+  name: "REFUSAL-INCOMPATIBLE-01",
+  createdAt: "2026-09-07T13:10:00Z",
+  query: "Use the optical and SAR images together to identify built-up regions.",
+  workflow: {
+    id: "unsupported",
+    label: "Refused — Modality Incompatible",
+    requiredObservations: "1 optical + 1 SAR observation",
+  },
+  intent: {
+    workflow: "optical_sar",
+    label: "OPTICAL-SAR FUSION",
+    confidence: 0.94,
+    entities: [{ text: "built-up", type: "class" }],
+    requiredInput: "1 optical + 1 SAR",
+    currentInput: "2 optical observations (Cartosat-3)",
+    compatibility: "incompatible",
+  },
+  route: [
+    { id: "input", label: "INPUT", detail: "2 Optical (Cartosat-3)" },
+    { id: "validator", label: "MODALITY VALIDATOR", detail: "Incompatible Pair" },
+    { id: "blocked", label: "ROUTING BLOCKED", detail: "Preconditions Unmet" },
+  ],
+  observed: [
+    "Observation 1: Cartosat-3 MX (Optical, 4-Band, 0.6m GSD)",
+    "Observation 2: Cartosat-3 MX (Optical, 4-Band, 0.6m GSD)",
+    "Missing SAR observation for dielectric and backscatter cross-modal fusion",
+  ],
+  answer:
+    "Routing Blocked: Modality pair is incompatible. The submitted query requires 1 optical and 1 SAR observation to perform cross-modal structural fusion. Two optical images were provided.",
+  detailedAnswer:
+    "Pre-flight modality audit rejected the input dataset. Joint optical-SAR fusion algorithms require distinct physical observation modalities: optical multispectral reflectance and SAR microwave backscatter. Presenting two optical scenes cannot satisfy SAR feature requirements (such as double-bounce dihedral scattering and dielectric surface roughness estimation). Ingestion was aborted at the routing stage to prevent erroneous model execution.",
+  interpretation:
+    "No fusion executed. Attach a SAR observation (e.g. RISAT-1A or EOS-04 C-Band SAR) to enable cross-modal analysis.",
+  confidence: {
+    level: "unsupported",
+    score: null,
+    factors: [
+      {
+        label: "Modality compatibility check",
+        status: "missing",
+        detail: "Optical+Optical received",
+      },
+      { label: "SAR structural scattering", status: "missing", detail: "No microwave raster" },
+      { label: "Dielectric moisture profile", status: "missing", detail: "Requires SAR C/X band" },
+    ],
+    limitations: [
+      "Analysis blocked at validator stage.",
+      "Requires 1 optical and 1 SAR observation.",
+    ],
+  },
+  evidence: [],
+  trace: [
+    traceEvent("req_incomp_opt_opt", "validation", "INPUT VALIDATOR", 400, {
+      tool: "modality_compatibility_checker",
+      status: "failed",
+      message: "Modality mismatch: received optical+optical, required optical+sar",
+    }),
+    traceEvent("req_incomp_opt_opt", "routing", "ROUTING ENGINE", 250, {
+      tool: "router",
+      status: "skipped",
+      message: "Routing blocked: preconditions unmet — no fusion executed",
+    }),
+  ],
+  tool: { name: "modality_validator", version: "v0.3.0" },
+  model: { name: "Input Validation Engine", version: "v0.3.0" },
+  runtimeMs: 650,
+  refusal: {
+    title: "INPUT INCOMPATIBLE · ROUTING BLOCKED",
+    required: "1 optical + 1 SAR observation",
+    received: "2 optical observations (Cartosat-3 MX)",
+    action:
+      "Attach a SAR observation (e.g. RISAT-1A or EOS-04) to enable dielectric backscatter cross-modal fusion.",
+    actionHint:
+      "Optical-only scenes cannot provide microwave surface roughness and double-bounce scattering features.",
+  },
+  source: "demo",
+};
+
+/* ---------- DEMO 08 — Capability-Aware Refusal (Causal Query) ---------- */
+
+const demo08: AnalysisResult = {
+  requestId: "req_causal_9f1b",
+  name: "REFUSAL-CAUSAL-01",
+  createdAt: "2026-09-07T13:10:00Z",
+  query: "Why was this area developed?",
+  workflow: {
+    id: "unsupported",
+    label: "Refused — Exceeds Sensing Capability",
+    requiredObservations: "Socioeconomic / cadastral records (non-observable)",
+  },
+  intent: {
+    workflow: "unsupported",
+    label: "CAUSAL INFERENCE QUERY",
+    confidence: 0.98,
+    entities: [{ text: "Why was this area developed", type: "causal_inquiry" }],
+    requiredInput: "Cadastral and municipal zoning records",
+    currentInput: "Optical satellite observation",
+    compatibility: "incompatible",
+  },
+  route: [
+    { id: "input", label: "INPUT", detail: "1 image" },
+    { id: "validator", label: "VALIDATOR" },
+    { id: "classifier", label: "QUERY CLASSIFIER", detail: "Causal Inference" },
+    { id: "capability", label: "CAPABILITY CHECK", detail: "NON-OBSERVABLE" },
+    { id: "halt", label: "DOWNSTREAM SPECIALISTS HALTED" },
+  ],
+  observed: ["Visible built-up structures and newly paved road segments"],
+  answer:
+    "Query not fully supported: satellite imagery cannot determine causal drivers of development.",
+  detailedAnswer:
+    "Visible built-up expansion is observable, but human intent, economic motivations, ownership deeds, and municipal legal status cannot be determined from top-of-atmosphere reflectance.",
+  interpretation: "Causal inference refused to prevent hallucination.",
+  confidence: {
+    level: "unsupported",
+    score: null,
+    factors: [
+      { label: "Physical observability", status: "missing", detail: "Non-observable intent" },
+    ],
+    limitations: [
+      "Satellite sensors record physical surface reflectance, not administrative or causal decisions.",
+    ],
+  },
+  evidence: [],
+  trace: [
+    traceEvent("req_causal_9f1b", "validation", "INPUT VALIDATOR", 420, {
+      tool: "metadata_validator",
+    }),
+    traceEvent("req_causal_9f1b", "classification", "QUERY CLASSIFIER", 280, {
+      tool: "query_router",
+      modelVersion: "intent-clf v0.3.1",
+      message: "Detected causal query: 'Why was this area developed?'",
+    }),
+    traceEvent("req_causal_9f1b", "constraints", "CAPABILITY CHECK", 110, {
+      tool: "physical_grounding_verifier",
+      status: "failed",
+      error: "causal inference not supported by pixel radiance",
+    }),
+    traceEvent("req_causal_9f1b", "execution", "SPECIALIST TOOLS", null, {
+      status: "skipped",
+      message: "Refused — suggest: 'What changed in this region?'",
+    }),
+  ],
+  tool: { name: "physical_grounding_verifier", version: "v0.1.0" },
+  model: { name: "—", version: "—" },
+  runtimeMs: 810,
+  refusal: {
+    title: "QUERY NOT FULLY SUPPORTED",
+    required: "Socioeconomic and cadastral records",
+    received: "1 optical raster",
+    action: "TRY PHYSICAL QUERY",
+    actionHint: "Run suggested query: 'What changed in this region?'",
+  },
+  source: "demo",
+};
+
+/* ---------- DEMO 09 — 8 Invalid Input Failure Modes ---------- */
+
+const demo09: AnalysisResult = {
+  requestId: "req_failure_suite",
+  name: "FAILURE-SUITE-01",
+  createdAt: "2026-09-07T13:15:00Z",
+  query: "Run validation gateway diagnostics on uploaded rasters.",
+  workflow: {
+    id: "unsupported",
+    label: "Input Incompatible Suite",
+    requiredObservations: "Valid georeferenced observations",
+  },
+  intent: {
+    workflow: "unsupported",
+    label: "VALIDATION DIAGNOSTICS",
+    confidence: 0.99,
+    entities: [{ text: "validation", type: "diagnostic" }],
+    requiredInput: "Valid raster",
+    currentInput: "Diagnostic simulation",
+    compatibility: "incompatible",
+  },
+  route: [
+    { id: "input", label: "INPUT", detail: "File upload" },
+    { id: "validator", label: "VALIDATOR", detail: "FAILED" },
+    { id: "halt", label: "ROUTING BLOCKED" },
+  ],
+  observed: [],
+  answer: "",
+  detailedAnswer: "",
+  interpretation: "",
+  confidence: {
+    level: "unsupported",
+    score: null,
+    factors: [{ label: "Input integrity", status: "missing", detail: "Validation check failed" }],
+    limitations: ["Inspect specific failure code to resolve."],
+  },
+  evidence: [],
+  trace: [
+    traceEvent("req_failure_suite", "validation", "INPUT VALIDATOR", 120, {
+      tool: "raster_validator",
+      status: "failed",
+      error: "input rejected by validation gateway",
+    }),
+  ],
+  tool: { name: "raster_validator", version: "v0.1.0" },
+  model: { name: "—", version: "—" },
+  runtimeMs: 120,
+  refusal: {
+    title: "INPUT INCOMPATIBLE",
+    required: "Valid georeferenced raster",
+    received: "Invalid / incompatible input",
+    action: "RESOLVE VIA INSPECTOR",
+    actionHint: "Select failure mode to inspect root cause and required remediation.",
+  },
+  source: "demo",
 };
 
 export interface DemoScenario {
@@ -826,6 +1416,33 @@ export const demoScenarios: DemoScenario[] = [
     observations: [demoObservations.singleOptical],
     query: demo06.query,
     result: demo06,
+  },
+  {
+    id: "demo-07",
+    code: "DEMO 07",
+    title: "Optical+Optical Refusal",
+    description: "Fusion query with 2 optical images — rejected before fusion execution.",
+    observations: [demoObservations.before, demoObservations.after],
+    query: demo07.query,
+    result: demo07,
+  },
+  {
+    id: "demo-08",
+    code: "DEMO 08",
+    title: "Causal query refusal",
+    description: "Query 'Why was this area developed?' exceeds sensing capability.",
+    observations: [demoObservations.singleOptical],
+    query: demo08.query,
+    result: demo08,
+  },
+  {
+    id: "demo-09",
+    code: "DEMO 09",
+    title: "8 Failure modes suite",
+    description: "Interactive inspector for all 8 invalid input failure states.",
+    observations: [demoObservations.singleOptical],
+    query: demo09.query,
+    result: demo09,
   },
 ];
 
