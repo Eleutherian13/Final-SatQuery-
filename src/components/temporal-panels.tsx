@@ -799,7 +799,7 @@ export function TemporalRefusalCard({ onSelectPair }: { onSelectPair?: (() => vo
         <button
           type="button"
           onClick={onSelectPair}
-          className="w-full border border-primary bg-primary/10 py-2 font-semibold uppercase tracking-[0.16em] text-primary transition-colors hover:bg-primary/20"
+          className="w-full border border-primary bg-primary py-2.5 text-[10px] font-extrabold uppercase tracking-[0.18em] text-primary-foreground shadow-md transition-all hover:bg-primary/90 cursor-pointer"
         >
           Stage Co-registered Temporal Pair (DEMO 03) →
         </button>

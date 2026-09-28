@@ -79,7 +79,7 @@ export function ObservationList({
             GeoTIFF · Cloud Optimized · 4-Band
           </span>
           <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
-            <label className="cursor-pointer border border-border bg-panel-raised px-2.5 py-1 text-[9px] uppercase tracking-[0.12em] text-foreground transition-colors hover:border-primary hover:text-primary">
+            <label className="cursor-pointer border border-border bg-panel-raised px-2.5 py-1 text-[9.5px] font-bold uppercase tracking-[0.12em] text-foreground transition-colors hover:border-primary hover:text-primary">
               SELECT FILE
               <input
                 type="file"
@@ -91,44 +91,45 @@ export function ObservationList({
             <button
               type="button"
               onClick={() => workflow.start()}
-              className="border border-primary bg-primary/10 px-2.5 py-1 text-[9px] uppercase tracking-[0.12em] text-primary transition-colors hover:bg-primary/20"
+              className="border border-primary bg-primary/20 px-2.5 py-1 text-[9.5px] font-bold uppercase tracking-[0.12em] text-primary transition-colors hover:bg-primary/30"
             >
               USE DEMO IMAGE
             </button>
           </div>
 
-          {/* Golden Query one-click shortcut */}
+          {/* Golden Query shortcut */}
           <button
             type="button"
             onClick={() => workflow.start()}
-            className="mt-3 w-full border border-amber-500/60 bg-amber-500/10 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-amber-400 transition-colors hover:bg-amber-500/20"
+            className="mt-3 w-full border border-amber-400 bg-amber-500/20 py-2 text-[10px] font-extrabold uppercase tracking-[0.18em] text-amber-300 transition-colors hover:bg-amber-500/30 shadow-sm"
           >
-            ⚡ RUN GOLDEN QUERY
+            RUN GOLDEN QUERY (BENCHMARK SCENARIO)
           </button>
-          <p className="mt-1 text-center text-[9px] uppercase tracking-[0.12em] text-muted-foreground">
+          <p className="mt-1 text-center text-[9px] uppercase tracking-[0.12em] text-muted-foreground font-mono">
             Identify water body · Land cover · Built-up detection
           </p>
         </div>
 
         {/* Staged observation display */}
         <div className="space-y-1.5 border border-border bg-background p-2.5">
-          <div className="flex items-center justify-between">
-            <span className="text-foreground">
+          <div className="flex items-center justify-between font-mono">
+            <span className="text-foreground font-semibold">
               {observations[0]?.filename ?? "cartosat_demo.tif"}
             </span>
-            <span className="text-muted-foreground uppercase">
+            <span className="text-primary font-bold uppercase">
               {observations[0]?.metadata.sensor ?? "Cartosat-3"}
             </span>
           </div>
-          <p className="text-[9px] text-muted-foreground">
+          <p className="text-[9px] text-muted-foreground font-mono">
             Single-image scene staged for grounding, VQA, and land-cover interpretation.
           </p>
         </div>
 
+        {/* PROMINENT HIGH-VISIBILITY VALIDATION BUTTON */}
         <button
           type="button"
           onClick={workflow.start}
-          className="w-full border border-primary bg-primary/10 py-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary transition-colors hover:bg-primary/20"
+          className="w-full border border-primary bg-primary text-primary-foreground py-2 text-[10px] font-extrabold uppercase tracking-[0.18em] shadow-md transition-all hover:bg-primary/90 cursor-pointer"
         >
           Ingest & Validate Observations →
         </button>
@@ -543,11 +544,18 @@ export function QueryComposer({
         </div>
       )}
 
-      {/* Step 5: Query Input */}
-      <div>
-        <label className="mb-1.5 block font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-foreground">
-          WHAT WOULD YOU LIKE TO KNOW ABOUT THIS SCENE?
-        </label>
+      {/* Step 5: Query Input Box */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between border-b border-border pb-1 font-mono text-[10px]">
+          <span className="text-primary font-extrabold uppercase tracking-[0.16em] flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-primary pulse-dot" />
+            ANALYST QUERY INPUT
+          </span>
+          <span className="text-muted-foreground text-[9px] uppercase font-mono">
+            INPUT: <strong className="text-foreground">{result.intent.currentInput || "STAGED RASTER"}</strong>
+          </span>
+        </div>
+
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -562,41 +570,47 @@ export function QueryComposer({
               }
             }
           }}
-          className="border border-border bg-background focus-within:border-primary"
+          className="border-2 border-primary/60 bg-slate-950 shadow-lg focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/30"
         >
           <textarea
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             rows={3}
             spellCheck={false}
-            aria-label="Analyst query"
-            className="w-full resize-none bg-transparent px-2.5 py-2 text-[12px] leading-relaxed text-foreground outline-none"
+            aria-label="Analyst natural language query"
+            placeholder="Type natural language query (e.g., 'Identify water body and land cover...')..."
+            className="w-full resize-none bg-transparent px-3 py-2.5 text-[12px] font-mono leading-relaxed text-foreground outline-none placeholder:text-muted-foreground/60"
           />
-          <div className="flex items-center justify-between border-t border-border px-2 py-1.5">
-            <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
+          <div className="flex items-center justify-between border-t border-border bg-panel-raised/80 px-2.5 py-1.5">
+            <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               {result.intent.currentInput} attached
             </span>
             <button
               type="submit"
-              className="border border-primary bg-primary/10 px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-primary transition-colors hover:bg-primary/20"
+              className="border border-primary bg-primary px-3.5 py-1.5 font-mono text-[10px] font-extrabold uppercase tracking-[0.18em] text-primary-foreground shadow-md transition-all hover:bg-primary/90 cursor-pointer active:translate-y-0.5"
             >
-              SUBMIT QUERY →
+              EXECUTE QUERY →
             </button>
           </div>
         </form>
       </div>
 
-      <div className="flex flex-wrap gap-1">
-        {SUGGESTIONS.map((s) => (
-          <button
-            key={s}
-            type="button"
-            onClick={() => setDraft(s)}
-            className="border border-border px-1.5 py-0.5 text-left font-mono text-[10px] text-muted-foreground transition-colors hover:bg-panel-raised hover:text-foreground"
-          >
-            {s}
-          </button>
-        ))}
+      <div className="space-y-1">
+        <span className="font-mono text-[8.5px] font-bold uppercase tracking-[0.14em] text-muted-foreground block">
+          QUERY SUGGESTIONS:
+        </span>
+        <div className="flex flex-wrap gap-1.5">
+          {SUGGESTIONS.map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setDraft(s)}
+              className="border border-border bg-slate-900/90 px-2 py-1 text-left font-mono text-[9.5px] font-semibold text-foreground transition-colors hover:border-primary hover:bg-primary/15 hover:text-primary cursor-pointer"
+            >
+              {s}
+            </button>
+          ))}
+        </div>
       </div>
 
       <dl className="grid gap-y-1.5 border-t border-border pt-2 font-mono text-[10px]">

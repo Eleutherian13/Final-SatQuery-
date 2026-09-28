@@ -189,7 +189,10 @@ export interface GeoViewerProps {
   hoveredEvidenceId?: string | null;
   onSelectEvidence?: (id: string | null) => void;
   onHoverEvidence?: (id: string | null) => void;
+  acquisitionTarget?: { geometry: NormalizedBox; label: string } | null;
   workflowState?: LifecycleState | undefined;
+  query?: string | undefined;
+  result?: any | undefined;
   className?: string;
   initialMode?: ViewMode;
 }
@@ -201,7 +204,10 @@ export function GeoViewer({
   hoveredEvidenceId = null,
   onSelectEvidence,
   onHoverEvidence,
+  acquisitionTarget = null,
   workflowState,
+  query,
+  result,
   className = "",
   initialMode,
 }: GeoViewerProps) {
@@ -523,123 +529,7 @@ export function GeoViewer({
       ref={containerRef}
       className={`flex h-full min-h-0 min-w-0 max-w-full flex-col overflow-hidden bg-background text-foreground ${className}`}
     >
-      {/* Viewport Toolbar */}
-      <div className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-1 border-b border-border bg-panel px-3 py-1.5 font-mono text-[10px]">
-        {/* Mode Selector */}
-        {hasPair && (
-          <ToolGroup label="mode">
-            {isTemporalPair && (
-              <>
-                <ToolButton active={mode === "swipe"} onClick={() => setMode("swipe")}>
-                  swipe
-                </ToolButton>
-                <ToolButton
-                  active={mode === "side_by_side"}
-                  onClick={() => setMode("side_by_side")}
-                >
-                  split
-                </ToolButton>
-                <ToolButton active={mode === "difference"} onClick={() => setMode("difference")}>
-                  diff
-                </ToolButton>
-                <ToolButton active={mode === "change_mask"} onClick={() => setMode("change_mask")}>
-                  change
-                </ToolButton>
-                <ToolButton active={mode === "before"} onClick={() => setMode("before")}>
-                  t1
-                </ToolButton>
-                <ToolButton active={mode === "after"} onClick={() => setMode("after")}>
-                  t2
-                </ToolButton>
-              </>
-            )}
-            {isMultimodalPair && !isTemporalPair && (
-              <>
-                <ToolButton active={mode === "fused"} onClick={() => setMode("fused")}>
-                  fused
-                </ToolButton>
-                <ToolButton active={mode === "swipe"} onClick={() => setMode("swipe")}>
-                  swipe
-                </ToolButton>
-                <ToolButton
-                  active={mode === "side_by_side"}
-                  onClick={() => setMode("side_by_side")}
-                >
-                  split
-                </ToolButton>
-                <ToolButton active={mode === "optical"} onClick={() => setMode("optical")}>
-                  optical
-                </ToolButton>
-                <ToolButton active={mode === "sar"} onClick={() => setMode("sar")}>
-                  sar
-                </ToolButton>
-              </>
-            )}
-          </ToolGroup>
-        )}
-
-        {/* Layer Toggles */}
-        <ToolGroup label="layers">
-          <ToolButton active={showEvidence} onClick={() => setShowEvidence((v) => !v)}>
-            evidence
-          </ToolButton>
-          {showEvidence && (
-            <>
-              <ToolButton active={showMasks} onClick={() => setShowMasks((v) => !v)}>
-                mask
-              </ToolButton>
-              <ToolButton active={showBoxes} onClick={() => setShowBoxes((v) => !v)}>
-                bbox
-              </ToolButton>
-              <ToolButton active={showLabels} onClick={() => setShowLabels((v) => !v)}>
-                tag
-              </ToolButton>
-              <ToolButton active={showPoints} onClick={() => setShowPoints((v) => !v)}>
-                pin
-              </ToolButton>
-            </>
-          )}
-          <ToolButton active={showGrid} onClick={() => setShowGrid((v) => !v)}>
-            grid
-          </ToolButton>
-        </ToolGroup>
-
-        {/* Navigation & Controls */}
-        <ToolGroup label="viewport">
-          <ToolButton onClick={() => setZoom((z) => Math.min(8, +(z * 1.3).toFixed(2)))}>
-            +
-          </ToolButton>
-          <ToolButton onClick={() => setZoom((z) => Math.max(0.8, +(z / 1.3).toFixed(2)))}>
-            −
-          </ToolButton>
-          <ToolButton onClick={handleFit}>fit</ToolButton>
-          <ToolButton active={isFullscreen} onClick={toggleFullscreen}>
-            {isFullscreen ? "exit" : "full"}
-          </ToolButton>
-        </ToolGroup>
-
-        {/* Opacity Slider */}
-        <div className="flex items-center gap-1.5 pl-1">
-          <span className="text-muted-foreground uppercase tracking-[0.14em]">alpha</span>
-          <input
-            type="range"
-            min={0.1}
-            max={1}
-            step={0.05}
-            value={opacity}
-            aria-label="Evidence overlay opacity"
-            onChange={(e) => setOpacity(Number(e.target.value))}
-            className="h-1 w-14 cursor-pointer appearance-none bg-border accent-primary"
-          />
-        </div>
-
-        {/* Telemetry info */}
-        <span className="ml-auto hidden font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground sm:inline">
-          {zoom.toFixed(2)}× · {gsd}m GSD · {rasterW}×{rasterH}
-        </span>
-      </div>
-
-      {/* Main Canvas Viewport Area */}
+      {/* Main Canvas Viewport Area — Recomposed Canvas-Dominant Instrument */}
       <div
         ref={canvasRef}
         onWheel={handleWheel}
@@ -650,8 +540,125 @@ export function GeoViewer({
           dragRef.current = null;
           setCursorNorm(null);
         }}
-        className="relative min-h-[360px] flex-1 cursor-grab select-none overflow-hidden bg-background active:cursor-grabbing"
+        className="relative min-h-[420px] flex-1 cursor-grab select-none overflow-hidden bg-slate-950 active:cursor-grabbing"
       >
+        {/* Floating Contextual Instrument Bar (Canvas-Overlaid) */}
+        <div className="pointer-events-auto absolute top-2.5 left-2.5 right-2.5 z-30 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded border border-border/80 bg-slate-950/85 p-1.5 font-mono text-[9.5px] backdrop-blur-md shadow-2xl">
+          {/* Mode Selector */}
+          {hasPair && (
+            <ToolGroup label="mode">
+              {isTemporalPair && (
+                <>
+                  <ToolButton active={mode === "swipe"} onClick={() => setMode("swipe")}>
+                    swipe
+                  </ToolButton>
+                  <ToolButton
+                    active={mode === "side_by_side"}
+                    onClick={() => setMode("side_by_side")}
+                  >
+                    split
+                  </ToolButton>
+                  <ToolButton active={mode === "difference"} onClick={() => setMode("difference")}>
+                    diff
+                  </ToolButton>
+                  <ToolButton active={mode === "change_mask"} onClick={() => setMode("change_mask")}>
+                    change
+                  </ToolButton>
+                  <ToolButton active={mode === "before"} onClick={() => setMode("before")}>
+                    t1
+                  </ToolButton>
+                  <ToolButton active={mode === "after"} onClick={() => setMode("after")}>
+                    t2
+                  </ToolButton>
+                </>
+              )}
+              {isMultimodalPair && !isTemporalPair && (
+                <>
+                  <ToolButton active={mode === "fused"} onClick={() => setMode("fused")}>
+                    fused
+                  </ToolButton>
+                  <ToolButton active={mode === "swipe"} onClick={() => setMode("swipe")}>
+                    swipe
+                  </ToolButton>
+                  <ToolButton
+                    active={mode === "side_by_side"}
+                    onClick={() => setMode("side_by_side")}
+                  >
+                    split
+                  </ToolButton>
+                  <ToolButton active={mode === "optical"} onClick={() => setMode("optical")}>
+                    optical
+                  </ToolButton>
+                  <ToolButton active={mode === "sar"} onClick={() => setMode("sar")}>
+                    sar
+                  </ToolButton>
+                </>
+              )}
+            </ToolGroup>
+          )}
+
+          {/* Layer Toggles */}
+          <ToolGroup label="layers">
+            <ToolButton active={showEvidence} onClick={() => setShowEvidence((v) => !v)}>
+              evidence
+            </ToolButton>
+            {showEvidence && (
+              <>
+                <ToolButton active={showMasks} onClick={() => setShowMasks((v) => !v)}>
+                  mask
+                </ToolButton>
+                <ToolButton active={showBoxes} onClick={() => setShowBoxes((v) => !v)}>
+                  bbox
+                </ToolButton>
+                <ToolButton active={showLabels} onClick={() => setShowLabels((v) => !v)}>
+                  tag
+                </ToolButton>
+                <ToolButton active={showPoints} onClick={() => setShowPoints((v) => !v)}>
+                  pin
+                </ToolButton>
+              </>
+            )}
+            <ToolButton active={showGrid} onClick={() => setShowGrid((v) => !v)}>
+              grid
+            </ToolButton>
+          </ToolGroup>
+
+          {/* Navigation & Controls */}
+          <ToolGroup label="viewport">
+            <ToolButton onClick={() => setZoom((z) => Math.min(8, +(z * 1.3).toFixed(2)))}>
+              +
+            </ToolButton>
+            <ToolButton onClick={() => setZoom((z) => Math.max(0.8, +(z / 1.3).toFixed(2)))}>
+              −
+            </ToolButton>
+            <ToolButton onClick={handleFit}>fit</ToolButton>
+            <ToolButton active={isFullscreen} onClick={toggleFullscreen}>
+              {isFullscreen ? "exit" : "full"}
+            </ToolButton>
+          </ToolGroup>
+
+          {/* Opacity Slider */}
+          <div className="flex items-center gap-1.5 pl-1">
+            <span className="text-muted-foreground uppercase tracking-[0.14em]">alpha</span>
+            <input
+              type="range"
+              min={0.1}
+              max={1}
+              step={0.05}
+              value={opacity}
+              aria-label="Evidence overlay opacity"
+              onChange={(e) => setOpacity(Number(e.target.value))}
+              className="h-1 w-12 cursor-pointer appearance-none bg-border accent-primary"
+            />
+          </div>
+
+          {/* Truth & Provenance Status Pill */}
+          <div className="flex items-center gap-1 border-l border-border/60 pl-2">
+            <span className="border border-sky-500/40 bg-sky-500/10 px-1.5 py-0.5 text-[8.5px] font-bold uppercase tracking-wider text-sky-400">
+              DEMO FIXTURE ASSET
+            </span>
+          </div>
+        </div>
         {/* Loading skeleton */}
         {!imageLoaded && !imageError && (
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 bg-background/80 font-mono text-xs text-muted-foreground backdrop-blur-sm">
@@ -707,7 +714,7 @@ export function GeoViewer({
           <div className="absolute inset-0 flex divide-x divide-border">
             {/* Left Pane (Primary) */}
             <div className="relative flex-1 overflow-hidden">
-              <span className="absolute top-2 left-2 z-20 bg-background/80 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground">
+              <span className="absolute top-12 left-3 z-20 bg-slate-950/90 border border-border/80 px-2 py-1 font-mono text-[9.5px] font-bold uppercase tracking-[0.16em] text-foreground shadow-md backdrop-blur">
                 {primaryObs?.role ?? "Primary"} · {primaryObs?.modality.toUpperCase()}
               </span>
               <RenderStage
@@ -734,6 +741,8 @@ export function GeoViewer({
                   showLabels={showLabels}
                   showPoints={showPoints}
                   opacity={opacity}
+                  query={query}
+                  result={result}
                   onSelect={focusOnEvidence}
                   onHover={(id) => {
                     setInternalHoveredId(id);
@@ -745,7 +754,7 @@ export function GeoViewer({
 
             {/* Right Pane (Secondary) */}
             <div className="relative flex-1 overflow-hidden">
-              <span className="absolute top-2 left-2 z-20 bg-background/80 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground">
+              <span className="absolute top-12 left-3 z-20 bg-slate-950/90 border border-border/80 px-2 py-1 font-mono text-[9.5px] font-bold uppercase tracking-[0.16em] text-foreground shadow-md backdrop-blur">
                 {secondaryObs.role ?? "Secondary"} · {secondaryObs.modality.toUpperCase()}
               </span>
               <RenderStage
@@ -767,6 +776,8 @@ export function GeoViewer({
                   showLabels={showLabels}
                   showPoints={showPoints}
                   opacity={opacity}
+                  query={query}
+                  result={result}
                   onSelect={focusOnEvidence}
                   onHover={(id) => {
                     setInternalHoveredId(id);
@@ -800,7 +811,7 @@ export function GeoViewer({
                 url={secondaryUrl}
                 renderedRect={renderedRect}
                 transform={viewportTransform}
-                opacity={mode === "fused" ? 0.65 : 1}
+                opacity={mode === "fused" ? 0.75 : 1}
                 alt="Secondary raster layer"
                 className={
                   mode === "difference"
@@ -839,10 +850,10 @@ export function GeoViewer({
                   onChange={(e) => setSwipePercent(Number(e.target.value))}
                   className="absolute inset-x-0 bottom-8 z-30 mx-auto h-1.5 w-[65%] cursor-ew-resize appearance-none bg-border/70 accent-primary"
                 />
-                <span className="absolute top-2 left-2 z-20 bg-background/80 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
+                <span className="absolute top-12 left-3 z-20 bg-slate-950/90 border border-border/80 px-2 py-1 font-mono text-[9.5px] font-bold uppercase tracking-[0.14em] text-foreground shadow-md backdrop-blur">
                   {primaryObs?.role} · {primaryObs?.metadata.acquiredAt}
                 </span>
-                <span className="absolute top-2 right-2 z-20 bg-background/80 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
+                <span className="absolute top-12 right-3 z-20 bg-slate-950/90 border border-border/80 px-2 py-1 font-mono text-[9.5px] font-bold uppercase tracking-[0.14em] text-foreground shadow-md backdrop-blur">
                   {secondaryObs.role} · {secondaryObs.metadata.acquiredAt}
                 </span>
               </>
@@ -861,11 +872,22 @@ export function GeoViewer({
                 showLabels={showLabels}
                 showPoints={showPoints}
                 opacity={opacity}
+                query={query}
+                result={result}
                 onSelect={focusOnEvidence}
                 onHover={(id) => {
                   setInternalHoveredId(id);
                   onHoverEvidence?.(id);
                 }}
+              />
+            )}
+
+            {/* Targeted Evidence Acquisition Focus Stage */}
+            {acquisitionTarget && (
+              <AcquisitionTargetStage
+                renderedRect={renderedRect}
+                transform={viewportTransform}
+                target={acquisitionTarget}
               />
             )}
           </div>
@@ -928,30 +950,23 @@ export function GeoViewer({
           />
         )}
 
-        {/* North Arrow & Scale Bar */}
-        <div className="pointer-events-none absolute top-3 right-3 z-10 flex flex-col items-center font-mono text-[10px] text-muted-foreground">
-          <span className="text-foreground">▲</span>
-          <span>N</span>
+        {/* Floating Telemetry & Coordinate HUD */}
+        <div className="pointer-events-none absolute bottom-3 right-3 z-30 flex items-center gap-3 border border-border/80 bg-slate-950/90 px-3 py-1 font-mono text-[9px] text-muted-foreground shadow-xl backdrop-blur-md rounded">
+          <span className="flex items-center gap-1 text-foreground">
+            <span>▲ N</span>
+          </span>
+          <span className="text-border">|</span>
+          <span className="flex items-center gap-1">
+            <span className="block h-1 w-10 border-x border-b border-primary" />
+            <span className="text-primary font-bold">{Math.round((gsd * rasterW) / 10 / zoom)} m</span>
+          </span>
+          <span className="text-border">|</span>
+          <span>{zoom.toFixed(2)}×</span>
+          <span className="text-border">|</span>
+          <span>PX: <strong className="text-foreground">{readout ? `${readout.px}, ${readout.py}` : "—"}</strong></span>
+          <span className="text-border">|</span>
+          <span>CRS: <strong className="text-foreground">{primaryObs?.metadata.crs ?? "EPSG:4326"}</strong></span>
         </div>
-        <div className="pointer-events-none absolute bottom-3 right-3 z-10 flex items-center gap-1.5 font-mono text-[9px] text-muted-foreground">
-          <span className="block h-1 w-14 border-x border-b border-muted-foreground" />
-          <span>{Math.round((gsd * rasterW) / 10 / zoom)} m</span>
-        </div>
-      </div>
-
-      {/* Coordinate & Telemetry Status Bar */}
-      <div className="grid shrink-0 grid-cols-2 gap-x-4 gap-y-1 border-t border-border bg-panel px-3 py-1 font-mono text-[9px] text-muted-foreground sm:grid-cols-6">
-        <Readout label="pixel" value={readout ? `${readout.px} / ${readout.py}` : "—"} />
-        <Readout label="crs" value={primaryObs?.metadata.crs ?? "EPSG:4326"} />
-        <Readout label="frame" value="NORMALIZED_IMAGE" />
-        <Readout
-          label="safety"
-          value={
-            unmappedEvidence.length === 0
-              ? "LOCKED / SAFE"
-              : `⚠️ ${unmappedEvidence.length} UNMAPPED`
-          }
-        />
       </div>
     </div>
   );
@@ -1037,10 +1052,24 @@ function RenderStage({
   );
 }
 
+function isQueryMatch(ev: EvidenceObject, query?: string): boolean {
+  if (!query) return false;
+  const q = query.toLowerCase();
+  const l = ev.label.toLowerCase();
+  const cat = resolveCategory(ev);
+
+  if (q.includes("water") && (cat === "water" || l.includes("water") || l.includes("lake"))) return true;
+  if ((q.includes("built") || q.includes("building") || q.includes("structure")) && (cat === "built_up" || l.includes("built") || l.includes("urban"))) return true;
+  if (q.includes("change") && (cat === "change" || ev.type === "change_region")) return true;
+  if ((q.includes("vegetation") || q.includes("crop") || q.includes("land cover")) && (cat === "vegetation" || l.includes("vegetation"))) return true;
+  if (q.includes("optical") || q.includes("sar") || q.includes("modality")) return true;
+  return false;
+}
+
 /**
- * Canonical Evidence Overlay Stage — Category-Driven
+ * Canonical Evidence Overlay Stage — Category-Driven & Query-Responsive
  * Perfectly aligned with the RenderStage rect and inherits the identical transform.
- * Uses resolveCategory() for data-driven styling instead of hardcoded label checks.
+ * Uses resolveCategory() for data-driven styling and anchors query-matched targets.
  */
 function EvidenceOverlayStage({
   renderedRect,
@@ -1053,6 +1082,8 @@ function EvidenceOverlayStage({
   showLabels,
   showPoints,
   opacity,
+  query,
+  result,
   onSelect,
   onHover,
 }: {
@@ -1070,6 +1101,8 @@ function EvidenceOverlayStage({
   showLabels: boolean;
   showPoints: boolean;
   opacity: number;
+  query?: string | undefined;
+  result?: any | undefined;
   onSelect: (ev: EvidenceObject) => void;
   onHover: (id: string | null) => void;
 }) {
@@ -1099,6 +1132,7 @@ function EvidenceOverlayStage({
             const hovered = hoveredEvidenceId === e.id;
             const cat = resolveCategory(e);
             const cc = CATEGORY_COLORS[cat];
+            const isMatch = isQueryMatch(e, query);
             const points = polygon
               .map(([x, y]) => `${Math.round(x * 1000)},${Math.round(y * 1000)}`)
               .join(" ");
@@ -1107,9 +1141,9 @@ function EvidenceOverlayStage({
               <polygon
                 key={`poly-${e.id}`}
                 points={points}
-                fill={active || hovered ? cc.fillActive : cc.fill}
-                stroke={active || hovered ? cc.strokeActive : cc.stroke}
-                strokeWidth={active || hovered ? "2" : "1.2"}
+                fill={active || hovered || isMatch ? cc.fillActive : cc.fill}
+                stroke={active || hovered || isMatch ? cc.strokeActive : cc.stroke}
+                strokeWidth={active || hovered || isMatch ? "2.5" : "1.2"}
                 strokeDasharray={cc.dashed ? "4 3" : undefined}
                 className="transition-all"
               />
@@ -1125,6 +1159,7 @@ function EvidenceOverlayStage({
           const cc = CATEGORY_COLORS[cat];
           const active = activeEvidenceId === e.id;
           const hovered = hoveredEvidenceId === e.id;
+          const isMatch = isQueryMatch(e, query);
           const cx = (box.x + box.w / 2) * 100;
           const cy = (box.y + box.h / 2) * 100;
 
@@ -1138,13 +1173,13 @@ function EvidenceOverlayStage({
               }}
               onMouseEnter={() => onHover(e.id)}
               onMouseLeave={() => onHover(null)}
-              className="pointer-events-auto absolute flex items-center justify-center"
+              className="pointer-events-auto absolute flex items-center justify-center cursor-pointer"
               style={{
                 left: `${cx}%`,
                 top: `${cy}%`,
                 transform: "translate(-50%, -50%)",
-                width: active || hovered ? "14px" : "10px",
-                height: active || hovered ? "14px" : "10px",
+                width: active || hovered || isMatch ? "16px" : "10px",
+                height: active || hovered || isMatch ? "16px" : "10px",
                 transition: "all 150ms ease-out",
               }}
               title={`${e.label} [E${e.index}]`}
@@ -1154,9 +1189,9 @@ function EvidenceOverlayStage({
                 style={{
                   width: "100%",
                   height: "100%",
-                  backgroundColor: active || hovered ? cc.strokeActive : cc.stroke,
-                  border: `2px solid ${active || hovered ? "#fff" : "rgba(255,255,255,0.5)"}`,
-                  boxShadow: active || hovered ? `0 0 8px ${cc.strokeActive}` : undefined,
+                  backgroundColor: active || hovered || isMatch ? cc.strokeActive : cc.stroke,
+                  border: `2px solid ${active || hovered || isMatch ? "#fff" : "rgba(255,255,255,0.5)"}`,
+                  boxShadow: active || hovered || isMatch ? `0 0 10px ${cc.strokeActive}` : undefined,
                 }}
               />
             </button>
@@ -1170,7 +1205,14 @@ function EvidenceOverlayStage({
           const hovered = hoveredEvidenceId === e.id;
           const cat = resolveCategory(e);
           const cc = CATEGORY_COLORS[cat];
-          const borderStyle = active || hovered ? cc.borderActiveClass : cc.borderClass;
+          const isMatch = isQueryMatch(e, query);
+          const isDisputed = result?.biTemporal?.adversarial?.disagreements?.some(
+            (d: any) =>
+              d.topic?.toLowerCase().includes(e.label.toLowerCase()) ||
+              d.proposerClaim?.toLowerCase().includes(e.label.toLowerCase()),
+          );
+
+          const borderStyle = active || hovered || isMatch ? cc.borderActiveClass : cc.borderClass;
 
           return (
             <button
@@ -1188,24 +1230,38 @@ function EvidenceOverlayStage({
                 width: `${box.w * 100}%`,
                 height: `${box.h * 100}%`,
               }}
-              className={`pointer-events-auto absolute text-left transition-all ${borderStyle}`}
+              className={`pointer-events-auto absolute text-left transition-all ${borderStyle} ${
+                isMatch ? "ring-2 ring-primary shadow-[0_0_12px_rgba(0,240,255,0.5)]" : ""
+              }`}
               title={`Inspect evidence ${e.id}: ${e.label}`}
             >
               {/* Anchored Label Tag */}
               {showLabels && (
-                <span
-                  className={`absolute -top-5 left-0 flex items-center gap-1 whitespace-nowrap px-1.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-[0.14em] shadow backdrop-blur ${cc.labelBg}`}
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                  <span>E{e.index}</span>
-                  <span>·</span>
-                  <span>{e.label}</span>
-                  {e.confidence != null && (
-                    <span className="opacity-90 font-normal">
-                      [{Math.round(e.confidence * 100)}%]
+                <div className="absolute -top-6 left-0 flex items-center gap-1 whitespace-nowrap shadow-md pointer-events-none">
+                  <span
+                    className={`flex items-center gap-1 px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.14em] backdrop-blur ${cc.labelBg}`}
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                    <span>E{e.index}</span>
+                    <span>·</span>
+                    <span>{e.label}</span>
+                    {e.confidence != null && (
+                      <span className="opacity-90 font-mono text-[8.5px]">
+                        [{Math.round(e.confidence * 100)}%]
+                      </span>
+                    )}
+                  </span>
+                  {isMatch && (
+                    <span className="border border-primary bg-primary text-primary-foreground font-extrabold px-1.5 py-0.5 font-mono text-[8px] uppercase tracking-[0.12em] shadow">
+                      🎯 TARGET MATCH
                     </span>
                   )}
-                </span>
+                  {isDisputed && (
+                    <span className="border border-amber-400 bg-amber-500/25 text-amber-300 font-bold px-1.5 py-0.5 font-mono text-[8px] uppercase tracking-[0.12em] shadow">
+                      ⚠️ SKEPTIC CONTESTED
+                    </span>
+                  )}
+                </div>
               )}
             </button>
           );
@@ -1335,9 +1391,9 @@ function Minimap({
 
 function ToolGroup({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-1">
-      <span className="text-muted-foreground uppercase tracking-[0.14em]">{label}</span>
-      <div className="flex items-center gap-px">{children}</div>
+    <div className="flex items-center gap-1.5">
+      <span className="text-muted-foreground font-bold uppercase tracking-[0.14em] text-[8.5px]">{label}</span>
+      <div className="flex items-center gap-1">{children}</div>
     </div>
   );
 }
@@ -1355,10 +1411,10 @@ function ToolButton({
     <button
       type="button"
       onClick={onClick}
-      className={`border px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.12em] transition-colors ${
+      className={`border px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em] transition-all cursor-pointer ${
         active
-          ? "border-primary bg-primary/10 text-primary"
-          : "border-border text-muted-foreground hover:bg-panel-raised hover:text-foreground"
+          ? "border-primary bg-primary text-primary-foreground shadow-sm"
+          : "border-border bg-slate-900/90 text-foreground hover:border-primary hover:bg-panel-raised hover:text-primary"
       }`}
     >
       {children}
@@ -1372,5 +1428,53 @@ function Readout({ label, value }: { label: string; value: string }) {
       <span className="uppercase tracking-[0.12em]">{label}</span>
       <span className="truncate text-foreground">{value}</span>
     </span>
+  );
+}
+
+function AcquisitionTargetStage({
+  renderedRect,
+  transform,
+  target,
+}: {
+  renderedRect: RenderedImageRect;
+  transform: ViewportTransform;
+  target: { geometry: NormalizedBox; label: string };
+}) {
+  const box = target.geometry;
+  const leftPct = box.x * 100;
+  const topPct = box.y * 100;
+  const widthPct = box.w * 100;
+  const heightPct = box.h * 100;
+
+  return (
+    <div
+      className="pointer-events-none absolute z-30"
+      style={{
+        left: `${renderedRect.left}px`,
+        top: `${renderedRect.top}px`,
+        width: `${renderedRect.width}px`,
+        height: `${renderedRect.height}px`,
+        transform: `translate(${transform.panX}px, ${transform.panY}px) scale(${transform.zoom})`,
+        transformOrigin: "center",
+      }}
+    >
+      <div
+        className="absolute border-2 border-amber-400 bg-amber-500/20 shadow-[0_0_14px_rgba(245,158,11,0.6)] animate-pulse"
+        style={{
+          left: `${leftPct}%`,
+          top: `${topPct}%`,
+          width: `${widthPct}%`,
+          height: `${heightPct}%`,
+        }}
+      >
+        <div className="absolute -top-1 -left-1 w-2.5 h-2.5 border-t-2 border-l-2 border-amber-300" />
+        <div className="absolute -top-1 -right-1 w-2.5 h-2.5 border-t-2 border-r-2 border-amber-300" />
+        <div className="absolute -bottom-1 -left-1 w-2.5 h-2.5 border-b-2 border-l-2 border-amber-300" />
+        <div className="absolute -bottom-1 -right-1 w-2.5 h-2.5 border-b-2 border-r-2 border-amber-300" />
+        <div className="absolute -top-5 left-0 whitespace-nowrap border border-amber-400 bg-slate-950/95 px-1.5 py-0.5 font-mono text-[8.5px] font-bold uppercase text-amber-300 shadow-md">
+          🎯 ACQUISITION TARGET: {target.label}
+        </div>
+      </div>
+    </div>
   );
 }

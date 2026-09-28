@@ -35,19 +35,19 @@ function Registry() {
 
   return (
     <AppShell>
-      <div className="grid divide-border xl:grid-cols-[minmax(0,1fr)_300px] xl:divide-x">
-        <div className="divide-y divide-border">
+      <div className="grid divide-border xl:grid-cols-[minmax(0,1fr)_340px] xl:divide-x min-h-[calc(100vh-44px)]">
+        <div className="divide-y divide-border font-mono">
           <Panel
-            title="Specialist models"
-            meta={`${models.length} entries`}
+            title="Specialist Models"
+            meta={`${models.length} registered`}
             bodyClassName=""
             actions={
               <input
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                placeholder="filter"
+                placeholder="filter registry..."
                 aria-label="Filter registry"
-                className="w-28 border border-border bg-background px-1.5 py-0.5 font-mono text-[10px] text-foreground outline-none focus:border-primary"
+                className="w-36 border border-border bg-background px-2 py-0.5 text-[10px] text-foreground outline-none focus:border-primary placeholder:text-muted-foreground/60"
               />
             }
           >
@@ -56,65 +56,67 @@ function Registry() {
               {models.map((m) => (
                 <li
                   key={m.id}
-                  className="grid gap-x-4 gap-y-0.5 px-3 py-2 md:grid-cols-[220px_minmax(0,1fr)_minmax(0,1fr)_90px]"
+                  className="grid gap-x-4 gap-y-1.5 px-3.5 py-3 hover:bg-panel-raised/60 transition-colors md:grid-cols-[240px_minmax(0,1fr)_minmax(0,1fr)_100px]"
                 >
                   <div>
-                    <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-foreground">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">
                       {m.name}
                     </p>
-                    <p className="font-mono text-[10px] text-primary">{m.version}</p>
+                    <p className="text-[10px] text-primary font-semibold">{m.version}</p>
                   </div>
                   <Contract label="input contract" value={m.input} />
                   <Contract label="output contract" value={m.output} />
-                  <div className="flex items-start gap-1.5 md:justify-end">
+                  <div className="flex items-center gap-1.5 md:justify-end">
                     <span
-                      className={`mt-1 h-1.5 w-1.5 rounded-full ${
+                      className={`h-2 w-2 rounded-full ${
                         m.status === "ready"
-                          ? "bg-success"
+                          ? "bg-success shadow-[0_0_6px_var(--color-success)]"
                           : m.status === "loading"
-                            ? "bg-warning"
-                            : "bg-destructive"
+                            ? "bg-warning shadow-[0_0_6px_var(--color-warning)]"
+                            : "bg-destructive shadow-[0_0_6px_var(--color-destructive)]"
                       }`}
                     />
-                    <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-foreground">
                       {m.status}
                     </span>
                   </div>
-                  <p className="col-span-full font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
-                    roles · {m.roles.join(" / ")}
+                  <p className="col-span-full text-[9px] uppercase tracking-[0.16em] text-muted-foreground pt-1 border-t border-border/40">
+                    roles · <span className="text-foreground">{m.roles.join(" / ")}</span>
                   </p>
                 </li>
               ))}
             </ul>
           </Panel>
 
-          <Panel title="Orchestration tools" meta={`${tools.length} entries`} bodyClassName="">
+          <Panel title="Orchestration Tools" meta={`${tools.length} registered`} bodyClassName="">
             <ul className="divide-y divide-border">
               {tools.map((t) => (
                 <li
                   key={t.id}
-                  className="grid gap-x-4 gap-y-0.5 px-3 py-2 md:grid-cols-[220px_minmax(0,1fr)_minmax(0,1fr)_90px]"
+                  className="grid gap-x-4 gap-y-1.5 px-3.5 py-3 hover:bg-panel-raised/60 transition-colors md:grid-cols-[240px_minmax(0,1fr)_minmax(0,1fr)_100px]"
                 >
                   <div>
-                    <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-foreground">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-foreground">
                       {t.name}
                     </p>
-                    <p className="font-mono text-[10px] text-primary">{t.version}</p>
+                    <p className="text-[10px] text-primary font-semibold">{t.version}</p>
                   </div>
                   <Contract label="accepts" value={t.acceptedInputs} />
                   <Contract label="outputs" value={t.outputs} />
-                  <div className="flex items-start gap-1.5 md:justify-end">
+                  <div className="flex items-center gap-1.5 md:justify-end">
                     <span
-                      className={`mt-1 h-1.5 w-1.5 rounded-full ${
-                        t.status === "online" ? "bg-success" : "bg-destructive"
+                      className={`h-2 w-2 rounded-full ${
+                        t.status === "online"
+                          ? "bg-success shadow-[0_0_6px_var(--color-success)]"
+                          : "bg-destructive"
                       }`}
                     />
-                    <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-foreground">
                       {t.status}
                     </span>
                   </div>
-                  <p className="col-span-full font-mono text-[9px] uppercase tracking-[0.14em] text-muted-foreground">
-                    required metadata · {t.requiredMetadata}
+                  <p className="col-span-full text-[9px] uppercase tracking-[0.16em] text-muted-foreground pt-1 border-t border-border/40">
+                    required metadata · <span className="text-foreground">{t.requiredMetadata}</span>
                   </p>
                 </li>
               ))}
@@ -122,38 +124,41 @@ function Registry() {
           </Panel>
         </div>
 
-        <Panel title="System health" bodyClassName="">
-          <ul className="divide-y divide-border">
+        <Panel title="System Health & Compute" bodyClassName="">
+          <ul className="divide-y divide-border font-mono">
             {[
-              ["api", demoHealth.api, demoHealth.api === "online"],
-              ["inference", demoHealth.inference, demoHealth.inference === "ready"],
-              ["gpu / compute", demoHealth.gpu, true],
-              ["model cache", "warm", true],
-              ["storage", "available", true],
-              ["validator", "online", true],
+              ["api gateway", demoHealth.api, demoHealth.api === "online"],
+              ["inference engine", demoHealth.inference, demoHealth.inference === "ready"],
+              ["gpu / compute cluster", demoHealth.gpu, true],
+              ["model cache status", "warm", true],
+              ["raster storage", "available", true],
+              ["input validator", "online", true],
               [
-                "tools",
+                "specialist tools",
                 `${demoHealth.toolsOnline} / ${demoHealth.toolsTotal} ready`,
                 demoHealth.toolsOnline === demoHealth.toolsTotal,
               ],
             ].map(([label, value, ok]) => (
               <li
                 key={String(label)}
-                className="flex items-center justify-between gap-2 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em]"
+                className="flex items-center justify-between gap-2 px-3.5 py-2.5 text-[10px] uppercase tracking-[0.14em]"
               >
-                <span className="text-muted-foreground">{label}</span>
-                <span className="flex items-center gap-1.5 text-foreground">
+                <span className="text-muted-foreground font-medium">{label}</span>
+                <span className="flex items-center gap-1.5 text-foreground font-semibold">
                   <span
-                    className={`h-1.5 w-1.5 rounded-full ${ok ? "bg-success" : "bg-warning"}`}
+                    className={`h-1.5 w-1.5 rounded-full ${
+                      ok ? "bg-success shadow-[0_0_4px_var(--color-success)]" : "bg-warning"
+                    }`}
                   />
                   {value}
                 </span>
               </li>
             ))}
           </ul>
-          <p className="border-t border-border p-3 font-mono text-[10px] uppercase tracking-[0.14em] text-warning">
-            demo environment — inference simulated / local
-          </p>
+          <div className="border-t border-border p-3.5 font-mono text-[10px] uppercase tracking-[0.14em] text-warning bg-warning/5">
+            <span className="font-bold block mb-1">DEMO ENVIRONMENT SEAM</span>
+            Model inference local / simulated. Backend API contracts operational.
+          </div>
         </Panel>
       </div>
     </AppShell>
@@ -166,7 +171,8 @@ function Contract({ label, value }: { label: string; value: string }) {
       <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground">
         {label}
       </p>
-      <p className="font-mono text-[10px] text-foreground">{value}</p>
+      <p className="font-mono text-[10px] text-foreground font-medium">{value}</p>
     </div>
   );
 }
+

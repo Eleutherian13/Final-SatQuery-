@@ -157,15 +157,15 @@ export function WorkflowIndicator({ workflow }: WorkflowIndicatorProps) {
           </div>
 
           {/* Interactive Playback Controls */}
-          <div className="flex items-center border border-border bg-background">
+          <div className="flex items-center border border-border bg-slate-900/90 shadow-sm">
             {isRunning && !isPaused ? (
               <button
                 type="button"
                 onClick={pause}
                 title="Pause investigation lifecycle"
-                className="flex items-center gap-1 border-r border-border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-foreground transition-colors hover:bg-panel-raised"
+                className="flex items-center gap-1 border-r border-border px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-warning bg-warning/20 transition-colors hover:bg-warning/30 cursor-pointer"
               >
-                <Pause className="h-3 w-3 text-warning" />
+                <Pause className="h-3 w-3 text-warning fill-warning" />
                 <span className="hidden sm:inline">Pause</span>
               </button>
             ) : isPaused ? (
@@ -173,9 +173,9 @@ export function WorkflowIndicator({ workflow }: WorkflowIndicatorProps) {
                 type="button"
                 onClick={resume}
                 title="Resume automated execution"
-                className="flex items-center gap-1 border-r border-border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-primary transition-colors hover:bg-panel-raised"
+                className="flex items-center gap-1 border-r border-border px-2.5 py-1 font-mono text-[10px] font-extrabold uppercase tracking-[0.12em] text-primary-foreground bg-primary transition-colors hover:bg-primary/90 cursor-pointer"
               >
-                <Play className="h-3 w-3 text-primary fill-primary" />
+                <Play className="h-3 w-3 text-primary-foreground fill-primary-foreground" />
                 <span className="hidden sm:inline">Resume</span>
               </button>
             ) : (
@@ -183,9 +183,9 @@ export function WorkflowIndicator({ workflow }: WorkflowIndicatorProps) {
                 type="button"
                 onClick={start}
                 title={isComplete || isFailed ? "Replay investigation" : "Run complete lifecycle"}
-                className="flex items-center gap-1 border-r border-border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-primary transition-colors hover:bg-primary/10"
+                className="flex items-center gap-1 border-r border-border px-2.5 py-1 font-mono text-[10px] font-extrabold uppercase tracking-[0.12em] text-primary-foreground bg-primary transition-colors hover:bg-primary/90 cursor-pointer shadow-sm"
               >
-                <Play className="h-3 w-3 text-primary fill-primary" />
+                <Play className="h-3 w-3 text-primary-foreground fill-primary-foreground" />
                 <span className="hidden sm:inline">
                   {isComplete || isFailed ? "Replay" : "Execute"}
                 </span>
@@ -198,9 +198,9 @@ export function WorkflowIndicator({ workflow }: WorkflowIndicatorProps) {
               onClick={stepNext}
               disabled={isComplete || isFailed}
               title="Single step to next lifecycle state"
-              className="flex items-center gap-1 border-r border-border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:bg-panel-raised hover:text-foreground disabled:opacity-30"
+              className="flex items-center gap-1 border-r border-border px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-foreground transition-colors hover:bg-panel-raised hover:text-primary disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             >
-              <SkipForward className="h-3 w-3" />
+              <SkipForward className="h-3 w-3 text-foreground" />
               <span className="hidden sm:inline">Step</span>
             </button>
 
@@ -209,9 +209,9 @@ export function WorkflowIndicator({ workflow }: WorkflowIndicatorProps) {
               type="button"
               onClick={replay}
               title="Restart from observations upload"
-              className="flex items-center gap-1 border-r border-border px-2 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:bg-panel-raised hover:text-foreground"
+              className="flex items-center gap-1 border-r border-border px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-foreground transition-colors hover:bg-panel-raised hover:text-primary cursor-pointer"
             >
-              <RotateCcw className="h-3 w-3" />
+              <RotateCcw className="h-3 w-3 text-foreground" />
               <span className="hidden sm:inline">Replay</span>
             </button>
 
@@ -220,7 +220,7 @@ export function WorkflowIndicator({ workflow }: WorkflowIndicatorProps) {
               type="button"
               onClick={reset}
               title="Reset state machine to IDLE"
-              className="px-2 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:bg-panel-raised hover:text-foreground"
+              className="px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-foreground transition-colors hover:bg-panel-raised hover:text-primary cursor-pointer"
             >
               Reset
             </button>
